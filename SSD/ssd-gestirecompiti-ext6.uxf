@@ -1,0 +1,56 @@
+<diagram program="umletino" version="15.1"><zoom_level>12</zoom_level><element><id>UMLActor</id><coordinates><x>300</x><y>0</y><w>120</w><h>132</h></coordinates><panel_attributes>Organizzatore</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>156</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+1.accettaCommessa(utente)</panel_attributes><additional_attributes>430;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>108</y><w>36</w><h>1656</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;1360</additional_attributes></element><element><id>UMLDeployment</id><coordinates><x>804</x><y>24</y><w>132</w><h>60</h></coordinates><panel_attributes>System</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>276</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+2.compilaSchedaEvento(evento)</panel_attributes><additional_attributes>430;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>396</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+3.assegnaChef(chef)</panel_attributes><additional_attributes>430;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>432</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;.
+Aggiorna stato in "Chef assegnato"</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>UMLFrame</id><coordinates><x>312</x><y>1500</y><w>588</w><h>108</h></coordinates><panel_attributes>OPT
+fg=black</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLFrame</id><coordinates><x>276</x><y>468</y><w>672</w><h>384</h></coordinates><panel_attributes>LOOP
+fg=black</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLFrame</id><coordinates><x>312</x><y>504</y><w>576</w><h>96</h></coordinates><panel_attributes>OPT
+fg=black</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>636</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+5.approvaMenu(menu)</panel_attributes><additional_attributes>430;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>672</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;.
+Aggiorna stato in "In corso"</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>756</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;
+6.assegnaPersonale(personale?)</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>792</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;.
+Aggiorna stato in "personale assegnato"</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>852</x><y>72</y><w>36</w><h>1680</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;1380</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>192</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;.
+Aggiorna in stato "In compilazione"</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>312</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;.
+Aggiorna stato in "Scheda salvata"</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>516</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+4.prenotaPersonale(personale)</panel_attributes><additional_attributes>430;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>552</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;.
+Aggiorna stato in "personale prenotato"</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>864</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;
+7. preparazioneLocation(luogo)</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>900</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;.
+elenco attrezzature</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1512</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;
+8. appuntaEventoEMenu(evento, menu)</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1548</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;.
+note e menu salvati</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1644</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;
+9. terminaEvento(evento)</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1680</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;.
+Aggiorna stato in "terminato"</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>UMLFrame</id><coordinates><x>300</x><y>732</y><w>588</w><h>744</h></coordinates><panel_attributes>ALT
+fg=black
+bg=#A85CCC</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>288</x><y>924</y><w>624</w><h>48</h></coordinates><panel_attributes>lt=..
+</panel_attributes><additional_attributes>10;20;500;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>948</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;
+6a.1.annullaEvento(evento)</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>UMLFrame</id><coordinates><x>312</x><y>984</y><w>564</w><h>108</h></coordinates><panel_attributes>ALT
+fg=black
+bg=#A85CCC</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>984</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;
+6a.1a.1.annullaEventoRicorrente(evento)</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1032</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+6a.1a.2. si / no</panel_attributes><additional_attributes>430;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1008</y><w>540</w><h>60</h></coordinates><panel_attributes>lt=&lt;.
+Annullare tutte le occorrenze?
+</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1056</y><w>540</w><h>72</h></coordinates><panel_attributes>lt=&lt;.
+OK
+
+</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1092</y><w>540</w><h>60</h></coordinates><panel_attributes>lt=&lt;.
+Applicare penale?
+</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1128</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;
+6a.2.si / no</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1164</y><w>540</w><h>60</h></coordinates><panel_attributes>lt=&lt;.
+OK
+</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1212</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;
+6b.1.modificaEvento(evento)</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>UMLFrame</id><coordinates><x>312</x><y>1248</y><w>564</w><h>108</h></coordinates><panel_attributes>ALT
+fg=black
+bg=#A85CCC</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1248</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;
+6b.1a.1.modificaEventoRicorrente(evento)</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1296</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+6b.1a.2. si / no</panel_attributes><additional_attributes>430;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1272</y><w>540</w><h>60</h></coordinates><panel_attributes>lt=&lt;.
+Modificare tutte le occorrenze?
+</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1320</y><w>540</w><h>72</h></coordinates><panel_attributes>lt=&lt;.
+OK
+
+</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1356</y><w>540</w><h>60</h></coordinates><panel_attributes>lt=&lt;.
+Applicare penale?
+</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1392</y><w>540</w><h>48</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;
+6b.2.si / no</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>348</x><y>1428</y><w>540</w><h>60</h></coordinates><panel_attributes>lt=&lt;.
+OK
+</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>Relation</id><coordinates><x>288</x><y>1176</y><w>624</w><h>48</h></coordinates><panel_attributes>lt=..
+</panel_attributes><additional_attributes>10;20;500;20</additional_attributes></element></diagram>

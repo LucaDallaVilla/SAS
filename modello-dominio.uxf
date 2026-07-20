@@ -1,6 +1,6 @@
-<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><help_text>Space for diagram notes
+<diagram program="umletino" version="15.1"><zoom_level>9</zoom_level><help_text>Space for diagram notes
 
-</help_text><element><id>UMLClass</id><coordinates><x>640</x><y>140</y><w>180</w><h>190</h></coordinates><panel_attributes>Menù
+</help_text><element><id>UMLClass</id><coordinates><x>549</x><y>126</y><w>162</w><h>171</h></coordinates><panel_attributes>Menù
 --
 titolo: testo
 pubblicato: sì/no
@@ -9,144 +9,134 @@ piatti caldi: sì/no
 richiede cucina: sì/no
 buffet: sì/no
 finger food: sì/no
-
-layer=-1
-
-
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1170</x><y>0</y><w>160</w><h>90</h></coordinates><panel_attributes>Sezione
+approvato: sì/no</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1026</x><y>0</y><w>144</w><h>81</h></coordinates><panel_attributes>Sezione
 --
 nome: testo
 
-fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1040</x><y>1280</y><w>160</w><h>70</h></coordinates><panel_attributes>Ricettario
+fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>909</x><y>1152</y><w>144</w><h>63</h></coordinates><panel_attributes>Ricettario
 --
 
-fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1170</x><y>980</y><w>160</w><h>90</h></coordinates><panel_attributes>Ricetta
+fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1026</x><y>882</y><w>144</w><h>81</h></coordinates><panel_attributes>Ricetta
 --
 fg=blue
 nome: testo
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1170</x><y>190</y><w>160</w><h>110</h></coordinates><panel_attributes>Voce
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1026</x><y>171</y><w>144</w><h>99</h></coordinates><panel_attributes>Voce
 --
 descrizione: testo
-fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>640</x><y>610</y><w>180</w><h>150</h></coordinates><panel_attributes>Evento
+fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>549</x><y>549</y><w>162</w><h>135</h></coordinates><panel_attributes>SchedaEvento
 --
-data: data
-luogo: testo
 num. partecipanti: numero
-num. servizi: numero
-durata servizi: numero
-tipo servizi: testo
-note servizi: testo
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>720</x><y>10</y><w>470</w><h>150</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+servizi: Servizio[1..n]
+note: testo[0..1]
+stato: testo</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>621</x><y>9</y><w>423</w><h>135</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 contiene &gt;
 m2=0..n
 m1=1
 
-fg=blue</panel_attributes><additional_attributes>10;130;10;20;450;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1240</x><y>80</y><w>110</w><h>130</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;&gt;&gt;
+fg=blue</panel_attributes><additional_attributes>10;130;10;20;450;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1089</x><y>72</y><w>99</w><h>117</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;&gt;&gt;
 appartiene a ^
 m2=0..1
 m1=0..n
-fg=blue</panel_attributes><additional_attributes>10;110;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>810</x><y>220</y><w>380</w><h>50</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+fg=blue</panel_attributes><additional_attributes>10;110;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>702</x><y>198</y><w>342</w><h>45</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 &lt; appartiene a
 m2=0..n
 m1=0..1
 
-fg=blue</panel_attributes><additional_attributes>10;20;360;20</additional_attributes></element><element><id>Relation</id><coordinates><x>720</x><y>320</y><w>90</w><h>310</h></coordinates><panel_attributes>lt=-
-in uso in v
-m2=0..n
-m1=0..n</panel_attributes><additional_attributes>10;10;10;290</additional_attributes></element><element><id>Relation</id><coordinates><x>1240</x><y>290</y><w>130</w><h>710</h></coordinates><panel_attributes>lt=-
+fg=blue</panel_attributes><additional_attributes>10;20;360;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1089</x><y>261</y><w>117</w><h>639</h></coordinates><panel_attributes>lt=-
 fa riferimento a v
 m2=0..n
 m1=1
-fg=blue</panel_attributes><additional_attributes>10;690;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1120</x><y>1180</y><w>170</w><h>120</h></coordinates><panel_attributes>lt=-
+fg=blue</panel_attributes><additional_attributes>10;690;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>981</x><y>1062</y><w>153</w><h>108</h></coordinates><panel_attributes>lt=-
 &lt; si trova in
 m2=1
 m1=0..n
 
-fg=blue</panel_attributes><additional_attributes>150;20;10;20;10;100</additional_attributes></element><element><id>UMLClass</id><coordinates><x>30</x><y>670</y><w>190</w><h>60</h></coordinates><panel_attributes>Chef
+fg=blue</panel_attributes><additional_attributes>150;20;10;20;10;100</additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>603</y><w>171</w><h>54</h></coordinates><panel_attributes>Chef
 --
 nome: testo
-num.Telefono: numero</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>210</x><y>670</y><w>450</w><h>50</h></coordinates><panel_attributes>lt=-
+num.Telefono: numero</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>162</x><y>603</y><w>405</w><h>45</h></coordinates><panel_attributes>lt=-
 m2=0..1
 m1=0..n
 &lt; assegnato a 
-</panel_attributes><additional_attributes>430;20;10;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1760</x><y>1570</y><w>160</w><h>110</h></coordinates><panel_attributes>Turno
+</panel_attributes><additional_attributes>430;20;10;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1557</x><y>1413</y><w>144</w><h>99</h></coordinates><panel_attributes>Turno
 --
 descrizione: testo
-fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1760</x><y>1090</y><w>160</w><h>110</h></coordinates><panel_attributes>Cuoco
+fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1557</x><y>981</y><w>144</w><h>99</h></coordinates><panel_attributes>Cuoco
 --
-fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1740</x><y>1330</y><w>200</w><h>110</h></coordinates><panel_attributes>Compito
+fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1539</x><y>1197</y><w>180</w><h>99</h></coordinates><panel_attributes>Compito
 --
 quantità: testo
 tempo: numero
 da preparare: sì/no
 completato: sì/no
 
-fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1830</x><y>1190</y><w>110</w><h>160</h></coordinates><panel_attributes>lt=-
+fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1620</x><y>1071</y><w>99</w><h>144</h></coordinates><panel_attributes>lt=-
 m1=0..n
 m2=0..1
 eseguito da ^
-fg=blue</panel_attributes><additional_attributes>10;140;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1830</x><y>1430</y><w>90</w><h>160</h></coordinates><panel_attributes>lt=-
+fg=blue</panel_attributes><additional_attributes>10;140;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1620</x><y>1287</y><w>81</w><h>144</h></coordinates><panel_attributes>lt=-
 m1=0..1
 m2=0..n
 svolto in v
-fg=blue</panel_attributes><additional_attributes>10;140;10;10</additional_attributes></element><element><id>UMLNote</id><coordinates><x>2010</x><y>1440</y><w>310</w><h>90</h></coordinates><panel_attributes>Se un compito ha completato = sì allora 
+fg=blue</panel_attributes><additional_attributes>10;140;10;10</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1782</x><y>1296</y><w>279</w><h>81</h></coordinates><panel_attributes>Se un compito ha completato = sì allora 
 il compito deve avere obbligatoriamente 
 associato un cuoco ed un turno. In alternativa, 
 tale assegnamento non è obbligatorio.
 
 fg=blue
-bg=yellow</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>650</x><y>1020</y><w>170</w><h>110</h></coordinates><panel_attributes>Servizio
+bg=yellow</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>558</x><y>918</y><w>153</w><h>117</h></coordinates><panel_attributes>Servizio
 --
 tipologia: testo
-data: date
-orario: time
-luogo: testo</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>720</x><y>750</y><w>90</w><h>290</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+data: data
+orario: tempo
+durata: numero
+note: testo[0..1]</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>621</x><y>675</y><w>81</w><h>261</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 prevede v
 m2=1..n
 m1=1
-</panel_attributes><additional_attributes>10;10;10;270</additional_attributes></element><element><id>UMLClass</id><coordinates><x>650</x><y>1350</y><w>170</w><h>110</h></coordinates><panel_attributes>Foglio Riepilogativo
+</panel_attributes><additional_attributes>10;10;10;270</additional_attributes></element><element><id>UMLClass</id><coordinates><x>558</x><y>1215</y><w>153</w><h>99</h></coordinates><panel_attributes>Foglio Riepilogativo
 --
 
-fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>730</x><y>1120</y><w>100</w><h>250</h></coordinates><panel_attributes>lt=-
+fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>630</x><y>1026</y><w>90</w><h>207</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=0..1
 relativo a ^
-fg=blue</panel_attributes><additional_attributes>10;10;10;230</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1760</x><y>1770</y><w>160</w><h>110</h></coordinates><panel_attributes>Tabellone dei Turni
+fg=blue</panel_attributes><additional_attributes>10;10;10;210</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1557</x><y>1593</y><w>144</w><h>99</h></coordinates><panel_attributes>Tabellone dei Turni
 --
 
-fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1830</x><y>1670</y><w>90</w><h>120</h></coordinates><panel_attributes>lt=-
+fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1620</x><y>1503</y><w>81</w><h>108</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=0.n
 contiene ^
-fg=blue</panel_attributes><additional_attributes>10;100;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1270</x><y>1150</y><w>160</w><h>90</h></coordinates><panel_attributes>Mansione di cucina
+fg=blue</panel_attributes><additional_attributes>10;100;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1116</x><y>1035</y><w>144</w><h>81</h></coordinates><panel_attributes>Mansione di cucina
 --
 fg=blue
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1420</x><y>1030</y><w>290</w><h>200</h></coordinates><panel_attributes>lt=-
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1251</x><y>927</y><w>261</w><h>180</h></coordinates><panel_attributes>lt=-
 m1=0..n
 m2=0..n
   è ingrediente in v
-fg=blue</panel_attributes><additional_attributes>100;10;160;10;160;170;10;170</additional_attributes></element><element><id>Relation</id><coordinates><x>1340</x><y>1230</y><w>420</w><h>160</h></coordinates><panel_attributes>lt=-
+fg=blue</panel_attributes><additional_attributes>100;10;160;10;160;170;10;170</additional_attributes></element><element><id>Relation</id><coordinates><x>1179</x><y>1107</y><w>378</w><h>144</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=0..n
 &lt; consiste in 
-fg=blue</panel_attributes><additional_attributes>10;10;10;130;400;130</additional_attributes></element><element><id>Relation</id><coordinates><x>1340</x><y>1090</y><w>30</w><h>80</h></coordinates><panel_attributes>lt=&lt;&lt;-
-fg=blue</panel_attributes><additional_attributes>10;60;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1230</x><y>1090</y><w>250</w><h>30</h></coordinates><panel_attributes>lt=-
-fg=blue</panel_attributes><additional_attributes>10;10;230;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1230</x><y>1060</y><w>30</w><h>60</h></coordinates><panel_attributes>lt=-
-fg=blue</panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>Relation</id><coordinates><x>1450</x><y>1060</y><w>30</w><h>60</h></coordinates><panel_attributes>lt=-
-fg=blue</panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1380</x><y>980</y><w>140</w><h>90</h></coordinates><panel_attributes>Preparazione
+fg=blue</panel_attributes><additional_attributes>10;10;10;130;400;130</additional_attributes></element><element><id>Relation</id><coordinates><x>1179</x><y>981</y><w>27</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;-
+fg=blue</panel_attributes><additional_attributes>10;60;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1080</x><y>981</y><w>225</w><h>27</h></coordinates><panel_attributes>lt=-
+fg=blue</panel_attributes><additional_attributes>10;10;230;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1080</x><y>954</y><w>27</w><h>54</h></coordinates><panel_attributes>lt=-
+fg=blue</panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>Relation</id><coordinates><x>1278</x><y>954</y><w>27</w><h>54</h></coordinates><panel_attributes>lt=-
+fg=blue</panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1215</x><y>882</y><w>126</w><h>81</h></coordinates><panel_attributes>Preparazione
 --
 fg=blue
-nome: testo</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>810</x><y>1390</y><w>950</w><h>50</h></coordinates><panel_attributes>lt=-
+nome: testo</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>702</x><y>1251</y><w>855</w><h>45</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=0..n
 contiene &gt;
-fg=blue</panel_attributes><additional_attributes>10;20;930;20</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1390</x><y>100</y><w>230</w><h>110</h></coordinates><panel_attributes>Una voce puo' comparire in un 
+fg=blue</panel_attributes><additional_attributes>10;20;930;20</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1224</x><y>90</y><w>207</w><h>99</h></coordinates><panel_attributes>Una voce puo' comparire in un 
 menu' all'interno di una sezione
 oppure come voce "libera" quindi 
 verrà valorizzata  una e una sola 
 delle due  relazioni appartiene
 
-bg=yellow</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>120</x><y>720</y><w>550</w><h>730</h></coordinates><panel_attributes>lt=-
+bg=yellow</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>81</x><y>648</y><w>495</w><h>657</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=0..n
 
@@ -160,52 +150,62 @@ m2=0..n
 
                         è proprietario di &gt;
 
-fg=blue</panel_attributes><additional_attributes>10;10;10;700;530;700</additional_attributes></element><element><id>Relation</id><coordinates><x>100</x><y>200</y><w>560</w><h>490</h></coordinates><panel_attributes>lt=-
+fg=blue</panel_attributes><additional_attributes>10;10;10;700;530;700</additional_attributes></element><element><id>Relation</id><coordinates><x>81</x><y>180</y><w>486</w><h>441</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=0..n
-è proprietario di &gt;</panel_attributes><additional_attributes>30;470;30;20;540;20</additional_attributes></element><element><id>Relation</id><coordinates><x>810</x><y>270</y><w>410</w><h>850</h></coordinates><panel_attributes>lt=-
+crea &gt;</panel_attributes><additional_attributes>10;470;10;20;520;20</additional_attributes></element><element><id>Relation</id><coordinates><x>702</x><y>243</y><w>369</w><h>765</h></coordinates><panel_attributes>lt=-
 m1=0..1
 m2=0..n
 in uso in v
 
-</panel_attributes><additional_attributes>10;10;330;10;330;820;10;820</additional_attributes></element><element><id>UMLNote</id><coordinates><x>2010</x><y>1160</y><w>230</w><h>80</h></coordinates><panel_attributes>Il Cuoco che esegue il Compito 
+</panel_attributes><additional_attributes>10;10;330;10;330;820;10;820</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1782</x><y>1044</y><w>207</w><h>72</h></coordinates><panel_attributes>Il Cuoco che esegue il Compito 
 deve essere disponibile 
 nel Turno in cui lo svolge 
 bg=yellow
-fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1910</x><y>1130</y><w>180</w><h>540</h></coordinates><panel_attributes>lt=-
+fg=blue</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1692</x><y>1017</y><w>162</w><h>486</h></coordinates><panel_attributes>lt=-
 m1=0..n
 m2=0..n
 disponibile in v
 
-fg=blue</panel_attributes><additional_attributes>10;510;70;510;70;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>810</x><y>670</y><w>130</w><h>50</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
+fg=blue</panel_attributes><additional_attributes>10;510;70;510;70;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>702</x><y>603</y><w>117</w><h>45</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
 m1=1..n
 m2=1
-&lt; ricorre</panel_attributes><additional_attributes>10;20;110;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>920</x><y>650</y><w>140</w><h>70</h></coordinates><panel_attributes>Evento ricorrente
+&lt; ricorre</panel_attributes><additional_attributes>10;20;110;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>801</x><y>585</y><w>144</w><h>72</h></coordinates><panel_attributes>SchedaEventoRicorrente
 --
 frequenza: numero
-data finale: data</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>350</x><y>830</y><w>140</w><h>70</h></coordinates><panel_attributes>Cliente
+data finale: data</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>288</x><y>855</y><w>126</w><h>63</h></coordinates><panel_attributes>Cliente
 --
 nome: testo
 cognome: testo
-num. telefono: numero</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>410</x><y>690</y><w>250</w><h>160</h></coordinates><panel_attributes>lt=-
+num. telefono: numero</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>342</x><y>774</y><w>108</w><h>99</h></coordinates><panel_attributes>lt=-
 m1=1
-m2=1..n
-
-                              
-commissiona &gt;</panel_attributes><additional_attributes>10;140;10;20;230;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>380</x><y>1130</y><w>210</w><h>70</h></coordinates><panel_attributes>Personale
+m2=1                         
+commissiona &gt;</panel_attributes><additional_attributes>10;90;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>315</x><y>1017</y><w>189</w><h>63</h></coordinates><panel_attributes>Personale
 --
-tipologia: testo (chef, servizio, ecc...)</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>470</x><y>1050</y><w>200</w><h>100</h></coordinates><panel_attributes>lt=-
-lavora &gt;
+tipologia: testo (chef, servizio, ecc...)
+date disponibili: data[1..n]
+stato: testo</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>396</x><y>945</y><w>180</w><h>90</h></coordinates><panel_attributes>lt=-
+lavora per &gt;
 m2=1..n
-m1=1..n</panel_attributes><additional_attributes>10;80;10;20;180;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>860</x><y>910</y><w>210</w><h>70</h></coordinates><panel_attributes>Location
+m1=1..n</panel_attributes><additional_attributes>10;80;10;20;180;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>747</x><y>819</y><w>189</w><h>63</h></coordinates><panel_attributes>Location
 --
 luogo: testo
-elenco attrezzature: testo</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>810</x><y>970</y><w>190</w><h>120</h></coordinates><panel_attributes>lt=-
+elenco attrezzature: testo</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>702</x><y>873</y><w>171</w><h>108</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=0..n
-si svolge in &gt;</panel_attributes><additional_attributes>160;10;160;90;10;90</additional_attributes></element><element><id>UMLClass</id><coordinates><x>450</x><y>480</y><w>140</w><h>70</h></coordinates><panel_attributes>Note
+si svolge in &gt;</panel_attributes><additional_attributes>160;10;160;90;10;90</additional_attributes></element><element><id>UMLClass</id><coordinates><x>378</x><y>432</y><w>126</w><h>63</h></coordinates><panel_attributes>Note
 --
-testo: testo</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>500</x><y>540</y><w>160</w><h>130</h></coordinates><panel_attributes>lt=-
-m1=0..n
+evento: SchedaEvento[0..1]
+menu: Menu[0..n]</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>423</x><y>486</y><w>144</w><h>117</h></coordinates><panel_attributes>lt=-
+m1=0..1
 m2=1
-&lt; appunta</panel_attributes><additional_attributes>20;10;20;100;140;100</additional_attributes></element></diagram>
+&lt; appunta</panel_attributes><additional_attributes>20;10;20;100;140;100</additional_attributes></element><element><id>UMLClass</id><coordinates><x>270</x><y>648</y><w>162</w><h>135</h></coordinates><panel_attributes>Commessa
+--
+data: data
+luogo: testo[0..1]
+num. partecipanti: numero
+servizi: testo</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>423</x><y>657</y><w>144</w><h>45</h></coordinates><panel_attributes>lt=-
+m2=0..1
+m1=0..n
+compila &gt;
+</panel_attributes><additional_attributes>140;20;10;20</additional_attributes></element></diagram>

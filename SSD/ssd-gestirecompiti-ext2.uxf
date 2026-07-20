@@ -3,7 +3,7 @@
 2.compilaSchedaEvento(evento)</panel_attributes><additional_attributes>430;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>363</x><y>869</y><w>495</w><h>44</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
 3.assegnaChef(chef)</panel_attributes><additional_attributes>430;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>363</x><y>902</y><w>495</w><h>44</h></coordinates><panel_attributes>lt=&lt;.
 Aggiorna stato in "Chef assegnato"</panel_attributes><additional_attributes>10;20;430;20</additional_attributes></element><element><id>UMLFrame</id><coordinates><x>330</x><y>1672</y><w>539</w><h>99</h></coordinates><panel_attributes>OPT
-fg=black</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLFrame</id><coordinates><x>264</x><y>935</y><w>649</w><h>627</h></coordinates><panel_attributes>LOOP
+fg=black</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLFrame</id><coordinates><x>264</x><y>935</y><w>649</w><h>726</h></coordinates><panel_attributes>LOOP
 fg=black</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLFrame</id><coordinates><x>330</x><y>968</y><w>528</w><h>88</h></coordinates><panel_attributes>OPT
 fg=black</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>363</x><y>1353</y><w>495</w><h>44</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
 5.approvaMenu(menu)</panel_attributes><additional_attributes>430;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>363</x><y>1386</y><w>495</w><h>44</h></coordinates><panel_attributes>lt=&lt;.

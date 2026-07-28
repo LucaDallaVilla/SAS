@@ -237,7 +237,7 @@ style=wordwrap</panel_attributes><additional_attributes></additional_attributes>
 [-] status: String
 --
 [+] checkAvailability(): boolean
-[+] setStatus(newStatus: String): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1742</x><y>1001</y><w>702</w><h>130</h></coordinates><panel_attributes>Chef
+[+] setStatus(newStatus: String): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1742</x><y>1001</y><w>663</w><h>130</h></coordinates><panel_attributes>Chef
 --
 --
 [-] name: String

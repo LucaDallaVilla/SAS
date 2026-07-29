@@ -190,8 +190,8 @@ fg=gray
 fg=gray</panel_attributes><additional_attributes>80;60;80;30;10;30;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1053</x><y>708</y><w>108</w><h>45</h></coordinates><panel_attributes>Preparation
 fg=gray
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1008</x><y>744</y><w>117</w><h>72</h></coordinates><panel_attributes>lt=&lt;&lt;-
-fg=gray</panel_attributes><additional_attributes>10;60;10;30;110;30;110;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1350</x><y>447</y><w>486</w><h>216</h></coordinates><panel_attributes>EventManager (controller)
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1456</x><y>1170</y><w>169</w><h>104</h></coordinates><panel_attributes>lt=&lt;&lt;-
+fg=gray</panel_attributes><additional_attributes>10;60;10;30;110;30;110;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1950</x><y>676</y><w>702</w><h>286</h></coordinates><panel_attributes>EventManager (controller)
 --
 --
 [-] currentEvent: EventSheet
@@ -204,7 +204,7 @@ fg=gray</panel_attributes><additional_attributes>10;60;10;30;110;30;110;10</addi
 [+] approveMenu(menu: Menu, service: Service): void
 [+] assignStaff(staff: List, service: Service): void
 [+] prepareLocation(venue: String, service: Service): void
-[+] pinEventAndMenus(): void
+[+] pinEventAndMenus(menus: List&lt;Menu&gt;): void
 [+] endEvent(): void
 [+] createEvent(): 
 

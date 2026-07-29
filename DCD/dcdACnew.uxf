@@ -191,7 +191,7 @@ fg=gray</panel_attributes><additional_attributes>80;60;80;30;10;30;10;10</additi
 fg=gray
 --
 </panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1456</x><y>1170</y><w>169</w><h>104</h></coordinates><panel_attributes>lt=&lt;&lt;-
-fg=gray</panel_attributes><additional_attributes>10;60;10;30;110;30;110;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1950</x><y>676</y><w>702</w><h>273</h></coordinates><panel_attributes>EventManager (controller)
+fg=gray</panel_attributes><additional_attributes>10;60;10;30;110;30;110;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1950</x><y>676</y><w>702</w><h>286</h></coordinates><panel_attributes>EventManager (controller)
 --
 --
 [-] currentEvent: EventSheet
@@ -204,7 +204,7 @@ fg=gray</panel_attributes><additional_attributes>10;60;10;30;110;30;110;10</addi
 [+] approveMenu(menu: Menu, service: Service): void
 [+] assignStaff(staff: List, service: Service): void
 [+] prepareLocation(venue: String, service: Service): void
-[+] pinEventAndMenus(): void
+[+] pinEventAndMenus(menus: List&lt;Menu&gt;): void
 [+] endEvent(): void
 
 

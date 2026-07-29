@@ -12,31 +12,15 @@ import catering.persistence.ResultHandler;
 /**
  * Represents an event in the catering system.
  */
-public class Event {
-
+public class Event extends Order{
     private int id;
-    private String name;
-    private Date dateStart;
-    private Date dateEnd;
     private User chef;
-    private ArrayList<Service> services;
+    private String name;
 
-    public Event() {
-        services = new ArrayList<>();
-    }
-
+    public Event() {};
     public Event(String name) {
-        this();
+        setServices(new ArrayList<>());
         this.name = name;
-    }
-
-    // Basic getters and setters
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -47,20 +31,12 @@ public class Event {
         this.name = name;
     }
 
-    public Date getDateStart() {
-        return dateStart;
+    public int getId() {
+        return id;
     }
 
-    public void setDateStart(Date dateStart) {
-        this.dateStart = dateStart;
-    }
-
-    public Date getDateEnd() {
-        return dateEnd;
-    }
-
-    public void setDateEnd(Date dateEnd) {
-        this.dateEnd = dateEnd;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public User getChef() {
@@ -79,31 +55,23 @@ public class Event {
         this.chef = User.load(chefId);
     }
 
-    public ArrayList<Service> getServices() {
-        return services;
-    }
-
-    public void setServices(ArrayList<Service> services) {
-        this.services = services;
-    }
-
     // Service management
     public void addService(Service service) {
-        if (services == null) {
-            services = new ArrayList<>();
+        if (getServices() == null) {
+            setServices(new ArrayList<>());
         }
-        services.add(service);
+        getServices().add(service);
     }
 
     public void removeService(Service service) {
-        if (services != null) {
-            services.remove(service);
+        if (getServices() != null) {
+            getServices().remove(service);
         }
     }
 
     public boolean containsService(Service service) {
-        if (services != null) {
-            return services.contains(service);
+        if (getServices() != null) {
+            return getServices().contains(service);
         }
         return false;
     }
@@ -112,8 +80,8 @@ public class Event {
     public void saveNewEvent() {
         String query = "INSERT INTO Events (name, date_start, date_end, chef_id) VALUES (?, ?, ?, ?)";
 
-        Long startTimestamp = (dateStart != null) ? dateStart.getTime() : null;
-        Long endTimestamp = (dateEnd != null) ? dateEnd.getTime() : null;
+        Long startTimestamp = (getDateStart() != null) ? getDateStart().getTime() : null;
+        Long endTimestamp = (getDateEnd() != null) ? getDateEnd().getTime() : null;
 
         PersistenceManager.executeUpdate(query, name, startTimestamp, endTimestamp, getChefId());
 
@@ -125,8 +93,8 @@ public class Event {
     public void updateEvent() {
         String query = "UPDATE Events SET name = ?, date_start = ?, date_end = ?, chef_id = ? WHERE id = ?";
 
-        Long startTimestamp = (dateStart != null) ? dateStart.getTime() : null;
-        Long endTimestamp = (dateEnd != null) ? dateEnd.getTime() : null;
+        Long startTimestamp = (getDateStart() != null) ? getDateStart().getTime() : null;
+        Long endTimestamp = (getDateEnd() != null) ? getDateEnd().getTime() : null;
 
         PersistenceManager.executeUpdate(query, name, startTimestamp, endTimestamp, getChefId(), id);
 
@@ -134,16 +102,17 @@ public class Event {
 
     public boolean deleteEvent() {
         // Delete all services first
-        for (Service service : services) {
+        for (Service service : getServices()) {
             service.deleteService();
         }
-        services.clear();
+        getServices().clear();
 
         // Delete the event
         String query = "DELETE FROM Events WHERE id = ?";
         boolean success = PersistenceManager.executeUpdate(query, id) > 0;
 
         if (success) {
+
         }
 
         return success;
@@ -160,16 +129,16 @@ public class Event {
                 Event e = new Event();
                 e.id = rs.getInt("id");
                 e.name = rs.getString("name");
-                e.dateStart = Date.valueOf(rs.getString("date_start"));
-                e.dateEnd = Date.valueOf(rs.getString("date_end"));
-                e.chef = User.load(rs.getInt("chef_id"));
+                e.setDateStart(Date.valueOf(rs.getString("date_start")));
+                e.setDateEnd(Date.valueOf(rs.getString("date_end")));
+                e.setChef(User.load(rs.getInt("chef_id")));
                 events.add(e);
             }
         });
 
         // Load services for each event
         for (Event e : events) {
-            e.services = Service.loadServicesForEvent(e.id);
+            e.setServices(Service.loadServicesForEvent(e.id));
         }
 
         return events;
@@ -198,13 +167,13 @@ public class Event {
 
                 e.id = rs.getInt("id");
                 e.name = rs.getString("name");
-                e.dateStart = Date.valueOf(rs.getString("date_start"));
-                e.dateEnd = Date.valueOf(rs.getString("date_end"));
+                e.setDateStart(Date.valueOf(rs.getString("date_start")));
+                e.setDateEnd(Date.valueOf(rs.getString("date_end")));
 
                 try {
-                    e.chef = User.load(rs.getInt("chef_id"));
+                    e.setChef(User.load(rs.getInt("chef_id")));
                 } catch (Exception ex) {
-                    e.chef = null;
+                    e.setChef(null);
                 }
 
                 eventHolder[0] = e;
@@ -218,9 +187,9 @@ public class Event {
         Event result = eventHolder[0];
         if (result != null) {
             try {
-                result.services = Service.loadServicesForEvent(result.id);
+                result.setServices(Service.loadServicesForEvent(result.id));
             } catch (Exception ex) {
-                result.services = new ArrayList<>();
+                result.setServices(new ArrayList<>());
             }
         }
 
@@ -229,7 +198,7 @@ public class Event {
 
     @Override
     public String toString() {
-        return "Event [id=" + id + ", name=" + name + ", dateStart=" + dateStart +
-                ", services=" + (services != null ? services.size() : 0) + "]";
+        return "Event [id=" + id + ", name=" + name + ", dateStart=" + getDateStart() +
+                ", services=" + (getServices() != null ? getServices().size() : 0) + "]";
     }
 }

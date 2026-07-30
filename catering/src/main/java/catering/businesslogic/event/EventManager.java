@@ -18,7 +18,7 @@ public class EventManager {
 
 
     private ArrayList<EventReceiver> eventReceivers;
-    private Event selectedEvent;
+    private EventSheet selectedEvent;
     private Service currentService;
 
     /**
@@ -53,8 +53,8 @@ public class EventManager {
      * 
      * @return List of all events
      */
-    public ArrayList<Event> getEvents() {
-        return Event.loadAllEvents();
+    public ArrayList<EventSheet> getEvents() {
+        return EventSheet.loadAllEvents();
     }
 
     /**
@@ -97,7 +97,7 @@ public class EventManager {
      * 
      * @return Selected event or null if none selected
      */
-    public Event getSelectedEvent() {
+    public EventSheet getSelectedEvent() {
         return selectedEvent;
     }
 
@@ -106,7 +106,7 @@ public class EventManager {
      * 
      * @param event Event to select
      */
-    public void setSelectedEvent(Event event) {
+    public void setSelectedEvent(EventSheet event) {
         this.selectedEvent = event;
     }
 
@@ -119,10 +119,10 @@ public class EventManager {
      * @param organizer User organizing the event
      * @return The newly created event
      */
-    public Event createEvent(String name, Date dateStart, Date dateEnd, User chef) {
+    public EventSheet createEvent(String name, Date dateStart, Date dateEnd, User chef) {
         try {
 
-            Event event = new Event();
+            EventSheet event = new EventSheet();
             event.setName(name);
             event.setDateStart(dateStart);
             event.setDateEnd(dateEnd);
@@ -141,7 +141,7 @@ public class EventManager {
         }
     }
 
-    public void selectEvent(Event event) {
+    public void selectEvent(EventSheet event) {
         this.selectedEvent = event;
         this.currentService = null;
     }
@@ -184,7 +184,7 @@ public class EventManager {
      * @param date    New date for the event
      */
     public void modifyEvent(int eventId, String name, Date date) {
-        Event event = Event.loadById(eventId);
+        EventSheet event = EventSheet.loadById(eventId);
         if (event != null) {
             event.setName(name);
             event.setDateStart(date);
@@ -285,7 +285,7 @@ public class EventManager {
      */
     public boolean deleteEvent(int eventId) {
         try {
-            Event eventToDelete = Event.loadById(eventId);
+            EventSheet eventToDelete = EventSheet.loadById(eventId);
             if (eventToDelete == null) {
                 return false;
             }
@@ -367,19 +367,19 @@ public class EventManager {
 
     // Notification methods to avoid code duplication
 
-    private void notifyEventCreated(Event event) {
+    private void notifyEventCreated(EventSheet event) {
         for (EventReceiver receiver : eventReceivers) {
             receiver.updateEventCreated(event);
         }
     }
 
-    private void notifyEventModified(Event event) {
+    private void notifyEventModified(EventSheet event) {
         for (EventReceiver receiver : eventReceivers) {
             receiver.updateEventModified(event);
         }
     }
 
-    private void notifyEventDeleted(Event event) {
+    private void notifyEventDeleted(EventSheet event) {
         for (EventReceiver receiver : eventReceivers) {
             receiver.updateEventDeleted(event);
         }

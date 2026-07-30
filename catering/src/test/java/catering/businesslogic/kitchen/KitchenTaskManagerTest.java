@@ -2,7 +2,7 @@ package catering.businesslogic.kitchen;
 
 import catering.businesslogic.CatERing;
 import catering.businesslogic.UseCaseLogicException;
-import catering.businesslogic.event.Event;
+import catering.businesslogic.event.EventSheet;
 import catering.businesslogic.event.Service;
 import catering.persistence.PersistenceManager;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,7 +23,7 @@ class KitchenTaskManagerTest {
 
     private static CatERing app;
 
-    private Event event;
+    private EventSheet event;
     private Service service;
 
     @BeforeAll
@@ -35,7 +35,7 @@ class KitchenTaskManagerTest {
     @BeforeEach
     void setUp() throws UseCaseLogicException {
         app.getUserManager().fakeLogin("Antonio"); // Antonio is the chef of the seeded event
-        event = Event.loadByName("Gala Aziendale Annuale");
+        event = EventSheet.loadByName("Gala Aziendale Annuale");
         service = Service.loadByName("Pranzo Buffet Aziendale");
     }
 

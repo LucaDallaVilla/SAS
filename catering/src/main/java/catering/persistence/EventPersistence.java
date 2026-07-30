@@ -1,6 +1,6 @@
 package catering.persistence;
 
-import catering.businesslogic.event.Event;
+import catering.businesslogic.event.EventSheet;
 import catering.businesslogic.event.EventReceiver;
 import catering.businesslogic.event.Service;
 import catering.businesslogic.menu.Menu;
@@ -12,22 +12,22 @@ import catering.businesslogic.menu.Menu;
 public class EventPersistence implements EventReceiver {
 
     @Override
-    public void updateEventCreated(Event event) {
+    public void updateEventCreated(EventSheet event) {
         event.saveNewEvent();
     }
 
     @Override
-    public void updateEventModified(Event event) {
+    public void updateEventModified(EventSheet event) {
         event.updateEvent();
     }
 
     @Override
-    public void updateEventDeleted(Event event) {
+    public void updateEventDeleted(EventSheet event) {
         event.deleteEvent();
     }
 
     @Override
-    public void updateServiceCreated(Event event, Service service) {
+    public void updateServiceCreated(EventSheet event, Service service) {
         service.saveNewService();
     }
 

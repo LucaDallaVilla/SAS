@@ -14,7 +14,7 @@ import catering.businesslogic.user.User;
 import catering.persistence.PersistenceManager;
 
 /**
- * Tests for {@link Event}: in-memory aggregate behaviour and the static
+ * Tests for {@link EventSheet}: in-memory aggregate behaviour and the static
  * loaders against the seeded SQLite database.
  */
 class EventTest {
@@ -27,13 +27,13 @@ class EventTest {
     @Nested
     class Aggregate {
 
-        private Event event;
+        private EventSheet event;
         private Service first;
         private Service second;
 
         @BeforeEach
         void setUp() {
-            event = new Event("Test Event");
+            event = new EventSheet("Test Event");
             first = new Service();
             first.setId(1);
             second = new Service();
@@ -103,12 +103,12 @@ class EventTest {
 
         @Test
         void testLoadAllEvents_ReturnsSeededEvents() {
-            List<Event> events = Event.loadAllEvents();
+            List<EventSheet> events = EventSheet.loadAllEvents();
 
             assertNotNull(events);
             assertFalse(events.isEmpty(), "the seed script must populate at least one event");
 
-            Event sample = events.get(0);
+            EventSheet sample = events.get(0);
             assertNotNull(sample.getName());
             assertNotNull(sample.getDateStart());
             assertNotNull(sample.getChef());
@@ -117,9 +117,9 @@ class EventTest {
 
         @Test
         void testLoadById_RoundTripsTheSameEvent() {
-            Event sample = Event.loadAllEvents().get(0);
+            EventSheet sample = EventSheet.loadAllEvents().get(0);
 
-            Event loaded = Event.loadById(sample.getId());
+            EventSheet loaded = EventSheet.loadById(sample.getId());
 
             assertNotNull(loaded);
             assertEquals(sample.getId(), loaded.getId());
@@ -128,9 +128,9 @@ class EventTest {
 
         @Test
         void testLoadByName_FindsEventByExactName() {
-            Event sample = Event.loadAllEvents().get(0);
+            EventSheet sample = EventSheet.loadAllEvents().get(0);
 
-            Event loaded = Event.loadByName(sample.getName());
+            EventSheet loaded = EventSheet.loadByName(sample.getName());
 
             assertNotNull(loaded);
             assertEquals(sample.getName(), loaded.getName());

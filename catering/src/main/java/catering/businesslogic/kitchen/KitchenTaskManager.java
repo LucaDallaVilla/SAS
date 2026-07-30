@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import catering.businesslogic.CatERing;
 import catering.businesslogic.UseCaseLogicException;
-import catering.businesslogic.event.Event;
+import catering.businesslogic.event.EventSheet;
 import catering.businesslogic.event.Service;
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.user.User;
@@ -26,7 +26,7 @@ public class KitchenTaskManager {
         this.eventReceivers.remove(rec);
     }
 
-    public SummarySheet generateSummarySheet(Event event, Service service) throws UseCaseLogicException {
+    public SummarySheet generateSummarySheet(EventSheet event, Service service) throws UseCaseLogicException {
 
         User user = CatERing.getInstance().getUserManager().getCurrentUser();
 

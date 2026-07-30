@@ -12,13 +12,14 @@ import catering.persistence.ResultHandler;
 /**
  * Represents an event in the catering system.
  */
-public class Event extends Order{
+public class EventSheet extends Order{
     private int id;
     private User chef;
     private String name;
+    private String status;
 
-    public Event() {};
-    public Event(String name) {
+    public EventSheet() {};
+    public EventSheet(String name) {
         setServices(new ArrayList<>());
         this.name = name;
     }
@@ -29,6 +30,14 @@ public class Event extends Order{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public int getId() {
@@ -119,14 +128,14 @@ public class Event extends Order{
     }
 
     // Static load methods
-    public static ArrayList<Event> loadAllEvents() {
-        ArrayList<Event> events = new ArrayList<>();
+    public static ArrayList<EventSheet> loadAllEvents() {
+        ArrayList<EventSheet> events = new ArrayList<>();
         String query = "SELECT * FROM Events ORDER BY date_start DESC";
 
         PersistenceManager.executeQuery(query, new ResultHandler() {
             @Override
             public void handle(ResultSet rs) throws SQLException {
-                Event e = new Event();
+                EventSheet e = new EventSheet();
                 e.id = rs.getInt("id");
                 e.name = rs.getString("name");
                 e.setDateStart(Date.valueOf(rs.getString("date_start")));
@@ -137,25 +146,25 @@ public class Event extends Order{
         });
 
         // Load services for each event
-        for (Event e : events) {
+        for (EventSheet e : events) {
             e.setServices(Service.loadServicesForEvent(e.id));
         }
 
         return events;
     }
 
-    public static Event loadById(int id) {
+    public static EventSheet loadById(int id) {
         String query = "SELECT * FROM Events WHERE id = ?";
         return loadEventByQuery(query, id);
     }
 
-    public static Event loadByName(String name) {
+    public static EventSheet loadByName(String name) {
         String query = "SELECT * FROM Events WHERE name = ?";
         return loadEventByQuery(query, name);
     }
 
-    private static Event loadEventByQuery(String query, Object param) {
-        final Event[] eventHolder = new Event[1];
+    private static EventSheet loadEventByQuery(String query, Object param) {
+        final EventSheet[] eventHolder = new EventSheet[1];
         final boolean[] eventFound = new boolean[1];
 
         PersistenceManager.executeQuery(query, new ResultHandler() {
@@ -163,7 +172,7 @@ public class Event extends Order{
             public void handle(ResultSet rs) throws SQLException {
                 eventFound[0] = true;
 
-                Event e = new Event();
+                EventSheet e = new EventSheet();
 
                 e.id = rs.getInt("id");
                 e.name = rs.getString("name");
@@ -184,7 +193,7 @@ public class Event extends Order{
             return null;
         }
 
-        Event result = eventHolder[0];
+        EventSheet result = eventHolder[0];
         if (result != null) {
             try {
                 result.setServices(Service.loadServicesForEvent(result.id));

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import catering.businesslogic.CatERing;
 import catering.businesslogic.UseCaseLogicException;
-import catering.businesslogic.event.Event;
+import catering.businesslogic.event.EventSheet;
 import catering.businesslogic.event.Service;
 import catering.businesslogic.shift.Shift;
 import catering.businesslogic.user.User;
@@ -28,7 +28,7 @@ class SummarySheetTest {
     private static CatERing app;
     private static User chef;
     private static User cook;
-    private static Event event;
+    private static EventSheet event;
     private static Service service;
 
     @BeforeAll
@@ -37,7 +37,7 @@ class SummarySheetTest {
         app = CatERing.getInstance();
         chef = User.load("Antonio");
         cook = User.load("Luca");
-        event = Event.loadByName("Gala Aziendale Annuale");
+        event = EventSheet.loadByName("Gala Aziendale Annuale");
         service = Service.loadByName("Pranzo Buffet Aziendale");
     }
 

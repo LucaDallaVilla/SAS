@@ -8,12 +8,14 @@ public class Order {
     private Date dateEnd;
     private ArrayList<Service> services;
     private int numParticipants;
+    private String venue;
 
     public Order() {};
 
-    public Order(Date dateStart, Date dateEnd, ArrayList<Service> services, int numParticipants) {
+    public Order(Date dateStart, Date dateEnd, ArrayList<Service> services, int numParticipants, String venue) {
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
+        this.venue = venue;
         this.services = services;
         this.numParticipants = numParticipants;
     }
@@ -49,5 +51,13 @@ public class Order {
 
     public void setNumParticipants(int numParticipants) {
         this.numParticipants = numParticipants;
+    }
+    
+    public String getVenue() {
+        return venue;
+    }
+
+    public void setVenue(String venue) {
+        this.venue = venue;
     }
 }

@@ -8,13 +8,13 @@ import catering.businesslogic.menu.Menu;
  */
 public interface EventReceiver {
 
-    void updateEventCreated(Event event);
+    void updateEventCreated(EventSheet event);
 
-    void updateEventModified(Event event);
+    void updateEventModified(EventSheet event);
 
-    void updateEventDeleted(Event event);
+    void updateEventDeleted(EventSheet event);
 
-    void updateServiceCreated(Event event, Service service);
+    void updateServiceCreated(EventSheet event, Service service);
 
     void updateServiceModified(Service service);
 

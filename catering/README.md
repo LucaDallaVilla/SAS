@@ -26,7 +26,7 @@ The code is organised in two layers:
 
 - `CatERing` (Singleton facade) is the entry point. It builds and holds the use-case managers and registers the persistence observers in its constructor.
 - `MenuManager`, `RecipeManager`, `EventManager`, `KitchenTaskManager`, `ShiftManager`, `UserManager` — one controller per use-case area. Each holds the relevant in-memory state (e.g. `currentMenu`, `currentSummarySheet`) and exposes the system operations from the SSDs in `teoria/05-DiagrammaDiSequenzaDiSistema.pdf`.
-- Domain entities — `Menu`, `Section`, `MenuItem`, `Recipe`, `Preparation`, `Event`, `Service`, `KitchenTask`, `SummarySheet`, `Assignment`, `Shift`, `User` — model the concepts named in `teoria/04-ModelloDelDominio.pdf`. Each domain entity exposes static methods for its own persistence (`Menu.create`, `Menu.load`, `Recipe.loadRecipe`, etc.).
+- Domain entities — `Menu`, `Section`, `MenuItem`, `Recipe`, `Preparation`, `EventSheet`, `Service`, `KitchenTask`, `SummarySheet`, `Assignment`, `Shift`, `User` — model the concepts named in `teoria/04-ModelloDelDominio.pdf`. Each domain entity exposes static methods for its own persistence (`Menu.create`, `Menu.load`, `Recipe.loadRecipe`, etc.).
 
 **`persistence/`** — JDBC infrastructure and the event-receiver implementations.
 

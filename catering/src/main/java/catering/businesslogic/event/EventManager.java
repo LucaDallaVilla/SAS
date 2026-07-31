@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import catering.businesslogic.UseCaseLogicException;
 import catering.businesslogic.menu.Menu;
-import catering.businesslogic.user.User;
 
 /**
  * EventManager handles all operations related to events and services in the
@@ -15,20 +14,20 @@ import catering.businesslogic.user.User;
  * management and menu assignments for services.
  */
 public class EventManager {
-    private ArrayList<EventReceiver> eventReceivers;
-    private EventSheet selectedEvent;
-    private Service currentService;
+    private final ArrayList<EventReceiver> eventReceivers;
+    private EventSheet currentEvent;
 
     /**
      * Constructor initializes the event receivers list
      */
     public EventManager() {
+        currentEvent = null;
         eventReceivers = new ArrayList<>();
     }
 
     /**
      * Adds an event receiver to be notified of events changes
-     * 
+     *
      * @param receiver The event receiver to add
      */
     public void addEventReceiver(EventReceiver receiver) {
@@ -39,7 +38,7 @@ public class EventManager {
 
     /**
      * Removes an event receiver
-     * 
+     *
      * @param receiver The event receiver to remove
      */
     public void removeEventReceiver(EventReceiver receiver) {
@@ -48,7 +47,7 @@ public class EventManager {
 
     /**
      * Gets all events in the system
-     * 
+     *
      * @return List of all events
      */
     public ArrayList<EventSheet> getEvents() {
@@ -56,81 +55,41 @@ public class EventManager {
     }
 
     /**
-     * Sets the current service based on service ID
-     * 
-     * @param serviceId ID of the service to select
-     */
-    public void setSelectedServiceIndex(int serviceId) {
-        if (selectedEvent != null && selectedEvent.getServices() != null) {
-            for (Service si : selectedEvent.getServices()) {
-                if (si.getId() == serviceId) {
-                    currentService = si;
-                    return;
-                }
-            }
-        }
-        // If service not found, currentService remains unchanged
-    }
-
-    /**
-     * Sets the current service directly
-     * 
-     * @param service Service to set as current
-     */
-    public void setCurrentService(Service service) {
-        this.currentService = service;
-    }
-
-    /**
-     * Gets the current service
-     * 
-     * @return Current service or null if none selected
-     */
-    public Service getCurrentService() {
-        return this.currentService;
-    }
-
-    /**
      * Gets the selected event
-     * 
+     *
      * @return Selected event or null if none selected
      */
-    public EventSheet getSelectedEvent() {
-        return selectedEvent;
+    public EventSheet getCurrentEvent() {
+        return currentEvent;
     }
 
     /**
      * Sets the selected event
-     * 
+     *
      * @param event Event to select
      */
-    public void setSelectedEvent(EventSheet event) {
-        this.selectedEvent = event;
+    public void setCurrentEvent(EventSheet event) {
+        this.currentEvent = event;
     }
 
     /**
      * Creates a new event with the given details
-     * 
-     * @param name      Event name
-     * @param dateStart Start date
-     * @param dateEnd   End date (can be null)
-     * @param organizer User organizing the event
-     * @return The newly created event
+     *
+     * @param dateStart       Start date
+     * @param dateEnd         End date
+     * @param numParticipants Number of participants
+     * @param services        List of services for the event
+     * @return The newly created event, or null if an error occurs
      */
-    public EventSheet createEvent(String name, Date dateStart, Date dateEnd, User chef) {
+    public EventSheet fillEventSheet(Date dateStart, Date dateEnd, int numParticipants, ArrayList<ServiceData> services) {
         try {
-            EventSheet event = new EventSheet();
-            event.setName(name);
-            event.setDateStart(dateStart);
-            event.setDateEnd(dateEnd);
-            event.setChef(chef);
+            EventSheet event = new EventSheet(dateStart, dateEnd, numParticipants, services);
 
             // Notify all receivers (EventPersistence will persist)
             notifyEventCreated(event);
 
             // Set as selected event
-            this.selectedEvent = event;
-            this.currentService = null;
+            this.currentEvent = event;
 
             return event;
         } catch (Exception e) {
@@ -138,35 +97,46 @@ public class EventManager {
         }
     }
 
+    /**
+     * Selects the specified event as the current event
+     *
+     * @param event The event to select
+     */
     public void selectEvent(EventSheet event) {
-        this.selectedEvent = event;
-        this.currentService = null;
+        this.currentEvent = event;
     }
 
+    /**
+     * Creates a new service for the current event
+     *
+     * @param name      Name of the service
+     * @param date      Date of the service
+     * @param timeStart Start time
+     * @param timeEnd   End time
+     * @param location  Location of the service
+     * @return The newly created service, or null if an error occurs
+     * @throws UseCaseLogicException if no event is currently selected
+     */
     public Service createService(String name, Date date, Time timeStart, Time timeEnd, String location)
             throws UseCaseLogicException {
-        if (selectedEvent == null) {
+        if (currentEvent == null) {
             String msg = "Cannot create service: no event selected";
             throw new UseCaseLogicException(msg);
         }
 
         try {
-
             Service service = new Service();
             service.setName(name);
             service.setDate(date);
             service.setTimeStart(timeStart);
             service.setTimeEnd(timeEnd);
             service.setLocation(location);
-            service.setEventId(selectedEvent.getId());
 
             // Notify all receivers (EventPersistence will persist)
             notifyServiceCreated(service);
 
             // Add to event and set as current service
-            selectedEvent.addService(service);
-            this.currentService = service;
-
+            currentEvent.addService(service);
             return service;
         } catch (Exception e) {
             return null;
@@ -175,12 +145,13 @@ public class EventManager {
 
     /**
      * Modifies an existing event
-     * 
+     *
      * @param eventId ID of the event to modify
      * @param name    New name for the event
      * @param date    New date for the event
+     * @return true if modified successfully, false otherwise
      */
-    public void modifyEvent(int eventId, String name, Date date) {
+    public boolean editEvent(int eventId, String name, Date date) {
         EventSheet event = EventSheet.loadById(eventId);
         if (event != null) {
             event.setName(name);
@@ -190,83 +161,38 @@ public class EventManager {
             notifyEventModified(event);
 
             // Update selected event if it's the same one
-            if (selectedEvent != null && selectedEvent.getId() == eventId) {
-                this.selectedEvent = event;
+            if (currentEvent != null && currentEvent.getId() == eventId) {
+                this.currentEvent = event;
             }
+
+            // TODO: scrivi le condizioni per applicare la penale
+            return false;
         }
+
+        return false;
     }
 
     /**
-     * Modifies a service
-     * 
-     * @param serviceId ID of the service to modify
-     * @param name      New name for the service
-     * @param date      New date for the service
-     * @param location  New location for the service
-     * @param menuId    ID of the menu to assign (0 for no menu)
-     * @return The modified service, or null if not found
-     */
-    public Service modifyService(int serviceId, String name, Date date, String location, int menuId) {
-        // First try to find service in the current event's services list
-        Service service = findServiceById(serviceId);
-
-        if (service != null) {
-            // Update service properties
-            service.setName(name);
-            service.setDate(date);
-            service.setLocation(location);
-
-            // Handle menu assignment if needed
-            if (menuId > 0 && (service.getMenuId() == 0 || service.getMenuId() != menuId)) {
-                try {
-                    Menu menu = Menu.load(menuId);
-                    if (menu != null) {
-                        service.setMenu(menu);
-                    }
-                } catch (Exception e) {
-                    System.err.println("Error loading menu: " + e.getMessage());
-                }
-            }
-
-            // Notify all receivers
-            notifyServiceModified(service);
-
-            // Update current service reference if this is the current service
-            if (currentService != null && currentService.getId() == serviceId) {
-                currentService = service;
-            }
-        }
-
-        return service;
-    }
-
-    /**
-     * Deletes a service by its ID
-     * 
-     * @param serviceId ID of the service to delete
+     * Deletes a service from the specified event
+     *
+     * @param currentEvent The event containing the service
+     * @param service      The service to delete
      * @return true if deleted successfully, false otherwise
      */
-    public boolean deleteService(int serviceId) {
+    public boolean deleteService(EventSheet currentEvent, Service service) {
         try {
-            if (selectedEvent == null) {
+            if (currentEvent == null) {
                 return false;
             }
 
-            Service serviceToDelete = findServiceById(serviceId);
-            if (serviceToDelete == null) {
+            if (service == null) {
                 return false;
             }
 
-
-            selectedEvent.removeService(serviceToDelete);
-
-            // Clear current service if it was the one deleted
-            if (currentService != null && currentService.getId() == serviceId) {
-                currentService = null;
-            }
+            currentEvent.removeService(service);
 
             // Notify all receivers (EventPersistence will delete from DB)
-            notifyServiceDeleted(serviceToDelete);
+            notifyServiceDeleted(service);
 
             return true;
         } catch (Exception e) {
@@ -276,7 +202,7 @@ public class EventManager {
 
     /**
      * Deletes an event and all its associated services
-     * 
+     *
      * @param eventId ID of the event to delete
      * @return true if deleted successfully, false otherwise
      */
@@ -287,11 +213,9 @@ public class EventManager {
                 return false;
             }
 
-
             // Clear references if this was the selected event
-            if (selectedEvent != null && selectedEvent.getId() == eventId) {
-                selectedEvent = null;
-                currentService = null;
+            if (currentEvent != null && currentEvent.getId() == eventId) {
+                currentEvent = null;
             }
 
             // Notify all receivers (EventPersistence will delete from DB)
@@ -304,108 +228,133 @@ public class EventManager {
     }
 
     /**
-     * Assigns a menu to the current service
-     * 
-     * @param menu The menu to assign
+     * Assigns a menu to the specified service
+     *
+     * @param service The service to which the menu will be assigned
+     * @param menu    The menu to assign
      * @throws UseCaseLogicException if no event or service is selected
      */
-    public void assignMenu(Menu menu) throws UseCaseLogicException {
-        if (selectedEvent == null) {
+    public void assignMenu(Service service, Menu menu) throws UseCaseLogicException {
+        if (currentEvent == null) {
             String msg = "Cannot assign menu: no event selected";
             throw new UseCaseLogicException(msg);
         }
 
-        if (currentService == null) {
+        if (service == null) {
             String msg = "Cannot assign menu: no service selected";
             throw new UseCaseLogicException(msg);
         }
 
-
-        currentService.setMenu(menu);
+        service.setMenu(menu);
 
         // Notify all receivers (EventPersistence will persist)
-        notifyMenuAssigned(currentService, menu);
+        notifyMenuAssigned(service, menu);
     }
 
     /**
-     * Removes the menu from the current service
-     * 
-     * @return true if removed successfully, false if no service selected
+     * Removes the menu from the specified service
+     *
+     * @param service The service from which to remove the menu
+     * @return true if removed successfully, false if the service is null
      */
-    public boolean removeMenu() {
-        if (currentService == null) {
+    public boolean removeMenu(Service service) {
+        if (service == null) {
             return false;
         }
 
-        currentService.removeMenu();
+        service.removeMenu();
 
         // Notify all receivers
-        notifyMenuRemoved(currentService);
+        notifyMenuRemoved(service);
 
         return true;
     }
 
-    /**
-     * Helper method to find a service by ID within the selected event
-     */
-    private Service findServiceById(int serviceId) {
-        if (selectedEvent == null || selectedEvent.getServices() == null) {
-            return null;
-        }
-
-        for (Service s : selectedEvent.getServices()) {
-            if (s.getId() == serviceId) {
-                return s;
-            }
-        }
-
-        return null;
-    }
-
     // Notification methods to avoid code duplication
 
+    /**
+     * Notifies all receivers that an event has been created
+     *
+     * @param event The created event
+     */
     private void notifyEventCreated(EventSheet event) {
         for (EventReceiver receiver : eventReceivers) {
             receiver.updateEventCreated(event);
         }
     }
 
+    /**
+     * Notifies all receivers that an event has been modified
+     *
+     * @param event The modified event
+     */
     private void notifyEventModified(EventSheet event) {
         for (EventReceiver receiver : eventReceivers) {
             receiver.updateEventModified(event);
         }
     }
 
+    /**
+     * Notifies all receivers that an event has been deleted
+     *
+     * @param event The deleted event
+     */
     private void notifyEventDeleted(EventSheet event) {
         for (EventReceiver receiver : eventReceivers) {
             receiver.updateEventDeleted(event);
         }
     }
 
+    /**
+     * Notifies all receivers that a service has been created
+     *
+     * @param service The created service
+     */
     private void notifyServiceCreated(Service service) {
         for (EventReceiver receiver : eventReceivers) {
-            receiver.updateServiceCreated(selectedEvent, service);
+            receiver.updateServiceCreated(currentEvent, service);
         }
     }
 
+    /**
+     * Notifies all receivers that a service has been modified
+     *
+     * @param service The modified service
+     */
     private void notifyServiceModified(Service service) {
         for (EventReceiver receiver : eventReceivers) {
             receiver.updateServiceModified(service);
         }
     }
 
+    /**
+     * Notifies all receivers that a service has been deleted
+     *
+     * @param service The deleted service
+     */
     private void notifyServiceDeleted(Service service) {
         for (EventReceiver receiver : eventReceivers) {
             receiver.updateServiceDeleted(service);
         }
     }
 
+    /**
+     * Notifies all receivers that a menu has been assigned to a service
+     *
+     * @param service The service to which the menu was assigned
+     * @param menu    The assigned menu
+     */
     private void notifyMenuAssigned(Service service, Menu menu) {
         for (EventReceiver receiver : eventReceivers) {
             receiver.updateMenuAssigned(service, menu);
         }
     }
 
+    /**
+     * Notifies all receivers that a menu has been removed from a service
+     *
+     * @param service The service from which the menu was removed
+     */
     private void notifyMenuRemoved(Service service) {
         for (EventReceiver receiver : eventReceivers) {
             receiver.updateMenuRemoved(service);

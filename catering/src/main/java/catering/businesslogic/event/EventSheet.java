@@ -12,24 +12,38 @@ import catering.persistence.ResultHandler;
 /**
  * Represents an event in the catering system.
  */
-public class EventSheet extends Order{
-    private int id;
+public class EventSheet {
+    private static int id = 0;
+    private Date dateStart;
+    private Date dateEnd;
     private User chef;
-    private String name;
+    private ArrayList<Service> services;
+    private int numParticipants;
     private String status;
 
-    public EventSheet() {};
-    public EventSheet(String name) {
-        setServices(new ArrayList<>());
-        this.name = name;
+
+    public EventSheet(Date dateStart, Date dateEnd, int numParticipants, ArrayList<ServiceData> services) {
+        this.services = new ArrayList<>();
+        this.dateEnd = dateEnd;
+        this.dateStart = dateStart;
+        this.numParticipants = numParticipants;
+        this.status = "saved";
+
+        // increments the static shared variable 'id'
+        id++;
+
+        // creates services from input array
+        for (ServiceData service : services) {
+            this.services.add(new Service()); // TODO: inserisci i parametri corretti
+        }
     }
 
-    public String getName() {
-        return name;
+    public int getNumParticipants() {
+        return numParticipants;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNumParticipants(int numParticipants) {
+        this.numParticipants = numParticipants;
     }
 
     public String getStatus() {
@@ -40,12 +54,33 @@ public class EventSheet extends Order{
         this.status = status;
     }
 
+    // Basic getters and setters
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getDateStart() {
+        return dateStart;
+    }
+
+    public void setDateStart(Date dateStart) {
+        this.dateStart = dateStart;
+    }
+
+    public Date getDateEnd() {
+        return dateEnd;
+    }
+
+    public void setDateEnd(Date dateEnd) {
+        this.dateEnd = dateEnd;
     }
 
     public User getChef() {
@@ -64,23 +99,31 @@ public class EventSheet extends Order{
         this.chef = User.load(chefId);
     }
 
+    public ArrayList<Service> getServices() {
+        return services;
+    }
+
+    public void setServices(ArrayList<ServiceData> services) {
+
+    }
+
     // Service management
     public void addService(Service service) {
-        if (getServices() == null) {
-            setServices(new ArrayList<>());
+        if (services == null) {
+            services = new ArrayList<>();
         }
-        getServices().add(service);
+        services.add(service);
     }
 
     public void removeService(Service service) {
-        if (getServices() != null) {
-            getServices().remove(service);
+        if (services != null) {
+            services.remove(service);
         }
     }
 
     public boolean containsService(Service service) {
-        if (getServices() != null) {
-            return getServices().contains(service);
+        if (services != null) {
+            return services.contains(service);
         }
         return false;
     }
@@ -89,8 +132,8 @@ public class EventSheet extends Order{
     public void saveNewEvent() {
         String query = "INSERT INTO Events (name, date_start, date_end, chef_id) VALUES (?, ?, ?, ?)";
 
-        Long startTimestamp = (getDateStart() != null) ? getDateStart().getTime() : null;
-        Long endTimestamp = (getDateEnd() != null) ? getDateEnd().getTime() : null;
+        Long startTimestamp = (dateStart != null) ? dateStart.getTime() : null;
+        Long endTimestamp = (dateEnd != null) ? dateEnd.getTime() : null;
 
         PersistenceManager.executeUpdate(query, name, startTimestamp, endTimestamp, getChefId());
 
@@ -102,8 +145,8 @@ public class EventSheet extends Order{
     public void updateEvent() {
         String query = "UPDATE Events SET name = ?, date_start = ?, date_end = ?, chef_id = ? WHERE id = ?";
 
-        Long startTimestamp = (getDateStart() != null) ? getDateStart().getTime() : null;
-        Long endTimestamp = (getDateEnd() != null) ? getDateEnd().getTime() : null;
+        Long startTimestamp = (dateStart != null) ? dateStart.getTime() : null;
+        Long endTimestamp = (dateEnd != null) ? dateEnd.getTime() : null;
 
         PersistenceManager.executeUpdate(query, name, startTimestamp, endTimestamp, getChefId(), id);
 
@@ -111,17 +154,16 @@ public class EventSheet extends Order{
 
     public boolean deleteEvent() {
         // Delete all services first
-        for (Service service : getServices()) {
+        for (Service service : services) {
             service.deleteService();
         }
-        getServices().clear();
+        services.clear();
 
         // Delete the event
         String query = "DELETE FROM Events WHERE id = ?";
         boolean success = PersistenceManager.executeUpdate(query, id) > 0;
 
         if (success) {
-
         }
 
         return success;
@@ -138,16 +180,16 @@ public class EventSheet extends Order{
                 EventSheet e = new EventSheet();
                 e.id = rs.getInt("id");
                 e.name = rs.getString("name");
-                e.setDateStart(Date.valueOf(rs.getString("date_start")));
-                e.setDateEnd(Date.valueOf(rs.getString("date_end")));
-                e.setChef(User.load(rs.getInt("chef_id")));
+                e.dateStart = Date.valueOf(rs.getString("date_start"));
+                e.dateEnd = Date.valueOf(rs.getString("date_end"));
+                e.chef = User.load(rs.getInt("chef_id"));
                 events.add(e);
             }
         });
 
         // Load services for each event
         for (EventSheet e : events) {
-            e.setServices(Service.loadServicesForEvent(e.id));
+            e.services = Service.loadServicesForEvent(e.id);
         }
 
         return events;
@@ -176,13 +218,13 @@ public class EventSheet extends Order{
 
                 e.id = rs.getInt("id");
                 e.name = rs.getString("name");
-                e.setDateStart(Date.valueOf(rs.getString("date_start")));
-                e.setDateEnd(Date.valueOf(rs.getString("date_end")));
+                e.dateStart = Date.valueOf(rs.getString("date_start"));
+                e.dateEnd = Date.valueOf(rs.getString("date_end"));
 
                 try {
-                    e.setChef(User.load(rs.getInt("chef_id")));
+                    e.chef = User.load(rs.getInt("chef_id"));
                 } catch (Exception ex) {
-                    e.setChef(null);
+                    e.chef = null;
                 }
 
                 eventHolder[0] = e;
@@ -196,9 +238,9 @@ public class EventSheet extends Order{
         EventSheet result = eventHolder[0];
         if (result != null) {
             try {
-                result.setServices(Service.loadServicesForEvent(result.id));
+                result.services = Service.loadServicesForEvent(result.id);
             } catch (Exception ex) {
-                result.setServices(new ArrayList<>());
+                result.services = new ArrayList<>();
             }
         }
 
@@ -207,7 +249,7 @@ public class EventSheet extends Order{
 
     @Override
     public String toString() {
-        return "Event [id=" + id + ", name=" + name + ", dateStart=" + getDateStart() +
-                ", services=" + (getServices() != null ? getServices().size() : 0) + "]";
+        return "Event [id=" + id + ", name=" + name + ", dateStart=" + dateStart +
+                ", services=" + (services != null ? services.size() : 0) + "]";
     }
 }

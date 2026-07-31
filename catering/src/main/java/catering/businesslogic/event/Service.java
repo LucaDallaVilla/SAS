@@ -20,7 +20,6 @@ public class Service {
     private Time timeStart;
     private Time timeEnd;
     private String location;
-    private int eventId;
     private Menu menu;
 
     public Service() {
@@ -77,14 +76,6 @@ public class Service {
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    public int getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(int eventId) {
-        this.eventId = eventId;
     }
 
     public int getMenuId() {

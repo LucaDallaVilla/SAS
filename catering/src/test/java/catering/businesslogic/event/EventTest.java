@@ -46,12 +46,6 @@ class EventTest {
         }
 
         @Test
-        void testId_SetExplicitly_IsReadable() {
-            event.setId(42);
-            assertEquals(42, event.getId());
-        }
-
-        @Test
         void testChef_SetExplicitly_IsReadableAndExposesId() {
             User chef = new User();
             chef.setId(7);

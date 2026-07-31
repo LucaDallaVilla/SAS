@@ -15,8 +15,6 @@ import catering.businesslogic.user.User;
  * management and menu assignments for services.
  */
 public class EventManager {
-
-
     private ArrayList<EventReceiver> eventReceivers;
     private EventSheet selectedEvent;
     private Service currentService;
@@ -121,7 +119,6 @@ public class EventManager {
      */
     public EventSheet createEvent(String name, Date dateStart, Date dateEnd, User chef) {
         try {
-
             EventSheet event = new EventSheet();
             event.setName(name);
             event.setDateStart(dateStart);

@@ -91,7 +91,8 @@ bg=yellow</panel_attributes><additional_attributes></additional_attributes></ele
 tipologia: testo
 data: data
 orarioInizio: tempo
-orarioFine: tempo</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>690</x><y>750</y><w>90</w><h>290</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
+orarioFine: tempo
+status: testo</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>690</x><y>750</y><w>90</w><h>290</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;&lt;-
 prevede v
 m2=1..n
 m1=1
@@ -174,7 +175,7 @@ m2=1
 &lt; ricorre</panel_attributes><additional_attributes>10;20;110;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>890</x><y>660</y><w>160</w><h>60</h></coordinates><panel_attributes>SchedaEventoRicorrente
 --
 frequenza: numero
-data finale: data</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>350</x><y>1130</y><w>210</w><h>70</h></coordinates><panel_attributes>Personale
+data finale: data</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>350</x><y>1130</y><w>210</w><h>80</h></coordinates><panel_attributes>Personale
 --
 tipologia: testo (chef, servizio, ecc...)
 date disponibili: data[1..n]

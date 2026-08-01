@@ -20,6 +20,8 @@ public class EventSheet {
     private ArrayList<Service> services;
     private int numParticipants;
     private String status;
+    private ArrayList<Note> notes;
+    private RecurringEventSheet recurringSeries;
 
 
     public EventSheet(Date dateStart, Date dateEnd, int numParticipants, ArrayList<ServiceData> services) {
@@ -99,11 +101,23 @@ public class EventSheet {
         this.chef = User.load(chefId);
     }
 
+    public RecurringEventSheet getRecurringSeries() {
+        return recurringSeries;
+    }
+
+    public void setRecurringSeries(RecurringEventSheet recurringSeries) {
+        this.recurringSeries = recurringSeries;
+    }
+
     public ArrayList<Service> getServices() {
         return services;
     }
 
     public void setServices(ArrayList<ServiceData> services) {
+
+    }
+
+    public void edit(EventSheet newEventSheet) {
 
     }
 

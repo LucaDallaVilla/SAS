@@ -16,6 +16,7 @@ import catering.businesslogic.menu.Menu;
 public class EventManager {
     private final ArrayList<EventReceiver> eventReceivers;
     private EventSheet currentEvent;
+    private FineConditions fineConditions;
 
     /**
      * Constructor initializes the event receivers list
@@ -23,6 +24,7 @@ public class EventManager {
     public EventManager() {
         currentEvent = null;
         eventReceivers = new ArrayList<>();
+        fineConditions = new FineConditions(30, 7);
     }
 
     /**
@@ -151,11 +153,15 @@ public class EventManager {
      * @param date    New date for the event
      * @return true if modified successfully, false otherwise
      */
-    public boolean editEvent(int eventId, String name, Date date) {
+    public boolean editEvent(int eventId, EventSheet newEventSheet) {
+        if(newEventSheet == null){
+            return false;
+        }
+
         EventSheet event = EventSheet.loadById(eventId);
+
         if (event != null) {
-            event.setName(name);
-            event.setDateStart(date);
+            event.edit(newEventSheet);
 
             // Notify all receivers
             notifyEventModified(event);
@@ -165,11 +171,55 @@ public class EventManager {
                 this.currentEvent = event;
             }
 
-            // TODO: scrivi le condizioni per applicare la penale
-            return false;
+            int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-event.getNumParticipants())/(newEventSheet.getNumParticipants()*100);
+            return fineConditions.checkDaysNotice(event.getDateStart()) && fineConditions.checkParticipantsVariation(deltaParticipants);
         }
 
         return false;
+    }
+    public boolean editRecurringEvent(int eventId, EventSheet newEventSheet, boolean SingleEvent) {
+        if(newEventSheet == null){return false;}
+
+        EventSheet event = EventSheet.loadById(eventId);
+        if(event == null) {return false;}
+
+        RecurringEventSheet recur = event.getRecurringSeries();
+        if(recur == null) {return false;}
+        
+        if(!SingleEvent){
+            boolean fine = false;
+            for(EventSheet e : recur.getEvents()){
+                if (e != null) {
+                    e.edit(newEventSheet);
+
+                    // Notify all receivers
+                    notifyEventModified(event);
+
+                    // Update selected event if it's the same one
+                    if (currentEvent != null && currentEvent.getId() == eventId) {
+                        this.currentEvent = event;
+                    }
+                }
+                if(fine == false){
+                    int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-e.getNumParticipants())/(newEventSheet.getNumParticipants()*100);
+                    fine = fineConditions.checkDaysNotice(e.getDateStart()) && fineConditions.checkParticipantsVariation(deltaParticipants);
+                }
+            }
+            return fine;
+        }else{
+            event.edit(newEventSheet);
+
+            // Notify all receivers
+            notifyEventModified(event);
+
+            // Update selected event if it's the same one
+            if (currentEvent != null && currentEvent.getId() == eventId) {
+                this.currentEvent = event;
+            }
+
+            int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-event.getNumParticipants())/(newEventSheet.getNumParticipants()*100);
+            return fineConditions.checkDaysNotice(event.getDateStart()) && fineConditions.checkParticipantsVariation(deltaParticipants);
+        }
     }
 
     /**

@@ -185,7 +185,7 @@ m2=1..n
 m1=1..n</panel_attributes><additional_attributes>10;80;10;20;180;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1079</x><y>1183</y><w>273</w><h>91</h></coordinates><panel_attributes>Location
 --
 luogo: testo
-elenco attrezzature: testo</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1014</x><y>1261</y><w>247</w><h>156</h></coordinates><panel_attributes>lt=-
+status: testo</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1014</x><y>1261</y><w>247</w><h>156</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=0..n
 si svolge in &gt;</panel_attributes><additional_attributes>160;10;160;90;10;90</additional_attributes></element><element><id>UMLClass</id><coordinates><x>494</x><y>624</y><w>221</w><h>91</h></coordinates><panel_attributes>Note

@@ -13,7 +13,7 @@ import catering.persistence.ResultHandler;
  * Represents an event in the catering system.
  */
 public class EventSheet {
-    private static int id = 0;
+    private int id;
     private Date dateStart;
     private Date dateEnd;
     private User chef;
@@ -21,6 +21,7 @@ public class EventSheet {
     private int numParticipants;
     private String status;
     private ArrayList<Note> notes;
+    private String name;
     private RecurringEventSheet recurringSeries;
 
 
@@ -31,13 +32,29 @@ public class EventSheet {
         this.numParticipants = numParticipants;
         this.status = "saved";
 
-        // increments the static shared variable 'id'
-        id++;
+        // creates services from input array
+        for (ServiceData service : services) {
+            this.services.add(new Service()); // TODO: inserisci i parametri corretti
+        }
+    }
+
+    public EventSheet(Date dateStart, Date dateEnd, int numParticipants, ArrayList<ServiceData> services, RecurringEventSheet res) {
+        this.services = new ArrayList<>();
+        this.dateEnd = dateEnd;
+        this.dateStart = dateStart;
+        this.numParticipants = numParticipants;
+        this.status = "saved";
+        this.recurringSeries = res;
 
         // creates services from input array
         for (ServiceData service : services) {
             this.services.add(new Service()); // TODO: inserisci i parametri corretti
         }
+    }
+
+    public EventSheet(Date dateStart, Date dateEnd, int numParticipants, ArrayList<ServiceData> services, int id) {
+        this(dateStart, dateEnd, numParticipants, services);
+        this.id = id;
     }
 
     public int getNumParticipants() {
@@ -114,7 +131,7 @@ public class EventSheet {
     }
 
     public void setServices(ArrayList<ServiceData> services) {
-
+        
     }
 
     public void edit(EventSheet newEventSheet) {

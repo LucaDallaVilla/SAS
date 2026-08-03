@@ -2,10 +2,15 @@ package catering.businesslogic.event;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 
 import catering.businesslogic.UseCaseLogicException;
 import catering.businesslogic.menu.Menu;
+import catering.businesslogic.user.User;
 
 /**
  * EventManager handles all operations related to events and services in the
@@ -100,6 +105,49 @@ public class EventManager {
     }
 
     /**
+     * Creates a new event with the given details
+     *
+     * @param dateStart       Start date
+     * @param dateEnd         End date
+     * @param numParticipants Number of participants
+     * @param services        List of services for the event
+     * @return The newly created event, or null if an error occurs
+     */
+    public void fillRecurringEventSheet(Date dateStart, Date dateEnd, int numParticipants, ArrayList<ServiceData> services, int frequency, Date finalDate) {
+        try {
+            LocalDate startDate = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate dateFinal = finalDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            RecurringEventSheet res = new RecurringEventSheet(frequency, finalDate);
+
+            for(int i=0; i<(ChronoUnit.DAYS.between(dateFinal, startDate))/frequency; i++){
+                EventSheet event = new EventSheet(dateStart, dateEnd, numParticipants, services, res);
+
+                // Notify all receivers (EventPersistence will persist)
+                notifyEventCreated(event);
+
+                // Set as selected event
+                this.currentEvent = event;
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void assignChef(User chef){
+        currentEvent.setChef(chef);
+    }
+
+    public void bookStaff(List<Staff> staff){
+        currentEvent.bookStaff(staff);
+    }
+
+    public void assignStaff(List<Staff> staff){
+        currentEvent.assignStaff(staff);
+    }
+
+    /**
      * Selects the specified event as the current event
      *
      * @param event The event to select
@@ -177,6 +225,15 @@ public class EventManager {
 
         return false;
     }
+
+    /**
+     * Modifies an existing event
+     *
+     * @param eventId ID of the event to modify
+     * @param name    New name for the event
+     * @param date    New date for the event
+     * @return true if modified successfully, false otherwise
+     */
     public boolean editRecurringEvent(int eventId, EventSheet newEventSheet, boolean SingleEvent) {
         if(newEventSheet == null){return false;}
 
@@ -277,6 +334,18 @@ public class EventManager {
         }
     }
 
+    public boolean deleteRecurringEvent(int eventid, boolean singleEvent){
+        // TODO: compila
+    }
+
+    public boolean cancelEvent(int eventid, boolean singleEvent){
+        // TODO: compila
+    }
+
+    public boolean cancelRecurringEvent(int eventid, boolean singleEvent){
+        // TODO: compila
+    }
+
     /**
      * Assigns a menu to the specified service
      *
@@ -284,7 +353,7 @@ public class EventManager {
      * @param menu    The menu to assign
      * @throws UseCaseLogicException if no event or service is selected
      */
-    public void assignMenu(Service service, Menu menu) throws UseCaseLogicException {
+    public void approveMenu(Service service, Menu menu) throws UseCaseLogicException {
         if (currentEvent == null) {
             String msg = "Cannot assign menu: no event selected";
             throw new UseCaseLogicException(msg);
@@ -318,6 +387,22 @@ public class EventManager {
         notifyMenuRemoved(service);
 
         return true;
+    }
+
+    public void suggestNewMenu(Menu menu, Service service){
+        //The methos of notification is chosen by the Organizer
+    }
+
+    public void prepareLocation(String venue, Service service){
+        currentEvent.setServiceLocation(venue, service);
+    }
+
+    public void pinEventAndMenus(List<Menu> menus){
+        // TODO: compila
+    }
+
+    public void endEvent(){
+        currentEvent.setStatus("Ended");
     }
 
     // Notification methods to avoid code duplication

@@ -25,6 +25,8 @@ public class EventSheet {
     private RecurringEventSheet recurringSeries;
 
 
+    public EventSheet() {}
+
     public EventSheet(Date dateStart, Date dateEnd, int numParticipants, ArrayList<ServiceData> services) {
         this.services = new ArrayList<>();
         this.dateEnd = dateEnd;
@@ -209,7 +211,6 @@ public class EventSheet {
             @Override
             public void handle(ResultSet rs) throws SQLException {
                 EventSheet e = new EventSheet();
-                e.id = rs.getInt("id");
                 e.name = rs.getString("name");
                 e.dateStart = Date.valueOf(rs.getString("date_start"));
                 e.dateEnd = Date.valueOf(rs.getString("date_end"));

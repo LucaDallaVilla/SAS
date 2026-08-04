@@ -3,7 +3,8 @@ package catering.businesslogic.event;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Time;
 
 public class FineConditions {
     // max variations of participants allowed without paying a fine
@@ -22,10 +23,10 @@ public class FineConditions {
     }
 
     public boolean checkDaysNotice(Date eventDate) {
-        Date today = new Date();
-
-        LocalDate localToday = today.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        LocalDate localEvent = eventDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Date today = Date.valueOf(LocalDate.now());
+        
+        LocalDate localToday = today.toLocalDate();
+        LocalDate localEvent = eventDate.toLocalDate();
 
         long daysNotice = ChronoUnit.DAYS.between(localToday, localEvent);
         return daysNotice < maxDaysNotice;

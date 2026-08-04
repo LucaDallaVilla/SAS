@@ -115,12 +115,12 @@ public class EventManager {
      */
     public void fillRecurringEventSheet(Date dateStart, Date dateEnd, int numParticipants, ArrayList<ServiceData> services, int frequency, Date finalDate) {
         try {
-            LocalDate startDate = dateStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            LocalDate dateFinal = finalDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate startDate = dateStart.toLocalDate();
+            LocalDate dateFinal = finalDate.toLocalDate();
 
             RecurringEventSheet res = new RecurringEventSheet(frequency, finalDate);
 
-            for(int i=0; i<(ChronoUnit.DAYS.between(dateFinal, startDate))/frequency; i++){
+            for(int i=0; i<(ChronoUnit.DAYS.between(startDate, dateFinal))/frequency; i++){
                 EventSheet event = new EventSheet(dateStart, dateEnd, numParticipants, services, res);
 
                 // Notify all receivers (EventPersistence will persist)
@@ -320,30 +320,114 @@ public class EventManager {
                 return false;
             }
 
-            // Clear references if this was the selected event
-            if (currentEvent != null && currentEvent.getId() == eventId) {
-                currentEvent = null;
-            }
-
             // Notify all receivers (EventPersistence will delete from DB)
             notifyEventDeleted(eventToDelete);
 
-            return true;
+            boolean fine = fineConditions.checkDaysNotice(eventToDelete.getDateStart());
+            // Clear references if this was the selected event
+            eventToDelete = null;
+
+            return fine;
         } catch (Exception e) {
             return false;
         }
     }
 
-    public boolean deleteRecurringEvent(int eventid, boolean singleEvent){
-        // TODO: compila
+    public boolean deleteRecurringEvent(int eventId, boolean singleEvent){
+        try {
+            RecurringEventSheet rec = currentEvent.getRecurringSeries();
+            boolean fine = false;
+            if(!singleEvent){
+                for(int i=0; i<rec.getEvents().size(); i++){
+                    EventSheet eventToDelete = rec.getEvents().get(i);
+                    if (eventToDelete == null) {
+                        return false;
+                    }
+                    
+                    if(!fine){fine = fineConditions.checkDaysNotice(eventToDelete.getDateStart());}
+
+                    // Notify all receivers (EventPersistence will delete from DB)
+                    notifyEventDeleted(eventToDelete);
+
+                    // Clear references if this was the selected event
+                    eventToDelete = null;
+                }
+                return fine;
+            }else{
+                EventSheet eventToDelete = EventSheet.loadById(eventId);
+                if (eventToDelete == null) {
+                    return false;
+                }
+
+                // Notify all receivers (EventPersistence will delete from DB)
+                notifyEventDeleted(eventToDelete);
+
+                fine = fineConditions.checkDaysNotice(eventToDelete.getDateStart());
+
+                // Clear references if this was the selected event
+                eventToDelete = null;
+
+                return fine;
+            }
+            
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    public boolean cancelEvent(int eventid, boolean singleEvent){
-        // TODO: compila
+    public boolean cancelEvent(int eventId, boolean singleEvent){
+        try {
+            EventSheet eventToCancel = EventSheet.loadById(eventId);
+            if (eventToCancel == null) {
+                return false;
+            }
+
+            // Clear references if this was the selected event
+            eventToCancel.setStatus("cancelled");
+
+            eventToCancel.cancelServices();
+
+            return fineConditions.checkDaysNotice(eventToCancel.getDateStart());
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    public boolean cancelRecurringEvent(int eventid, boolean singleEvent){
-        // TODO: compila
+    public boolean cancelRecurringEvent(int eventId, boolean singleEvent){
+        try {
+            RecurringEventSheet rec = currentEvent.getRecurringSeries();
+            if(!singleEvent){
+                EventSheet eventToCancel;
+                boolean fine;
+                for(int i=0; i<rec.getEvents().size(); i++){
+                    eventToCancel = rec.getEvents().get(i);
+                    if (eventToCancel == null) {
+                        return false;
+                    }
+
+                    // Clear references if this was the selected event
+                    eventToCancel.setStatus("cancelled");
+
+                    eventToCancel.cancelServices();
+                    if(!fine){fine = fineConditions.checkDaysNotice(eventToCancel.getDateStart());}
+                }
+                return fine;
+            }else{
+                EventSheet eventToCancel = EventSheet.loadById(eventId);
+                if (eventToCancel == null) {
+                    return false;
+                }
+
+                // Clear references if this was the selected event
+                eventToCancel.setStatus("cancelled");
+
+                eventToCancel.cancelServices();
+
+                return fineConditions.checkDaysNotice(eventToCancel.getDateStart());
+            }
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -398,7 +482,7 @@ public class EventManager {
     }
 
     public void pinEventAndMenus(List<Menu> menus){
-        // TODO: compila
+        currentEvent.addNote(menus);
     }
 
     public void endEvent(){

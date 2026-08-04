@@ -135,15 +135,27 @@ public class EventManager {
         }
     }
 
-    public void assignChef(User chef){
+    public void assignChef(User chef)throws UseCaseLogicException{
+        if (currentEvent == null) {
+            String msg = "Cannot assign menu: no event selected";
+            throw new UseCaseLogicException(msg);
+        }
         currentEvent.setChef(chef);
     }
 
-    public void bookStaff(List<Staff> staff){
+    public void bookStaff(List<Staff> staff)throws UseCaseLogicException{
+        if (currentEvent == null) {
+            String msg = "Cannot assign menu: no event selected";
+            throw new UseCaseLogicException(msg);
+        }
         currentEvent.bookStaff(staff);
     }
 
-    public void assignStaff(List<Staff> staff){
+    public void assignStaff(List<Staff> staff)throws UseCaseLogicException{
+        if (currentEvent == null) {
+            String msg = "Cannot assign menu: no event selected";
+            throw new UseCaseLogicException(msg);
+        }
         currentEvent.assignStaff(staff);
     }
 
@@ -152,7 +164,11 @@ public class EventManager {
      *
      * @param event The event to select
      */
-    public void selectEvent(EventSheet event) {
+    public void selectEvent(EventSheet event) throws UseCaseLogicException{
+        if (currentEvent == null) {
+            String msg = "Cannot assign menu: no event selected";
+            throw new UseCaseLogicException(msg);
+        }
         this.currentEvent = event;
     }
 
@@ -209,6 +225,8 @@ public class EventManager {
         EventSheet event = EventSheet.loadById(eventId);
 
         if (event != null) {
+            int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-event.getNumParticipants())/(newEventSheet.getNumParticipants()*100);
+            boolean fine = fineConditions.checkDaysNotice(event.getDateStart()) && fineConditions.checkParticipantsVariation(deltaParticipants);
             event.edit(newEventSheet);
 
             // Notify all receivers
@@ -218,9 +236,7 @@ public class EventManager {
             if (currentEvent != null && currentEvent.getId() == eventId) {
                 this.currentEvent = event;
             }
-
-            int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-event.getNumParticipants())/(newEventSheet.getNumParticipants()*100);
-            return fineConditions.checkDaysNotice(event.getDateStart()) && fineConditions.checkParticipantsVariation(deltaParticipants);
+            return fine;
         }
 
         return false;
@@ -247,6 +263,11 @@ public class EventManager {
             boolean fine = false;
             for(EventSheet e : recur.getEvents()){
                 if (e != null) {
+                    
+                    if(fine == false){
+                        int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-e.getNumParticipants())/(newEventSheet.getNumParticipants()*100);
+                        fine = fineConditions.checkDaysNotice(e.getDateStart()) && fineConditions.checkParticipantsVariation(deltaParticipants);
+                    }
                     e.edit(newEventSheet);
 
                     // Notify all receivers
@@ -257,25 +278,24 @@ public class EventManager {
                         this.currentEvent = event;
                     }
                 }
-                if(fine == false){
-                    int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-e.getNumParticipants())/(newEventSheet.getNumParticipants()*100);
-                    fine = fineConditions.checkDaysNotice(e.getDateStart()) && fineConditions.checkParticipantsVariation(deltaParticipants);
-                }
             }
             return fine;
         }else{
+            int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-event.getNumParticipants())/(newEventSheet.getNumParticipants()*100);
+            boolean fine = fineConditions.checkDaysNotice(event.getDateStart()) && fineConditions.checkParticipantsVariation(deltaParticipants);
             event.edit(newEventSheet);
 
             // Notify all receivers
             notifyEventModified(event);
+
+            
 
             // Update selected event if it's the same one
             if (currentEvent != null && currentEvent.getId() == eventId) {
                 this.currentEvent = event;
             }
 
-            int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-event.getNumParticipants())/(newEventSheet.getNumParticipants()*100);
-            return fineConditions.checkDaysNotice(event.getDateStart()) && fineConditions.checkParticipantsVariation(deltaParticipants);
+            return fine;
         }
     }
 
@@ -335,7 +355,7 @@ public class EventManager {
 
     public boolean deleteRecurringEvent(int eventId, boolean singleEvent){
         try {
-            RecurringEventSheet rec = currentEvent.getRecurringSeries();
+            RecurringEventSheet rec = EventSheet.loadById(eventId).getRecurringSeries();
             boolean fine = false;
             if(!singleEvent){
                 for(int i=0; i<rec.getEvents().size(); i++){
@@ -375,7 +395,7 @@ public class EventManager {
         }
     }
 
-    public boolean cancelEvent(int eventId, boolean singleEvent){
+    public boolean cancelEvent(int eventId){
         try {
             EventSheet eventToCancel = EventSheet.loadById(eventId);
             if (eventToCancel == null) {
@@ -395,10 +415,10 @@ public class EventManager {
 
     public boolean cancelRecurringEvent(int eventId, boolean singleEvent){
         try {
-            RecurringEventSheet rec = currentEvent.getRecurringSeries();
+            RecurringEventSheet rec = EventSheet.loadById(eventId).getRecurringSeries();
             if(!singleEvent){
                 EventSheet eventToCancel;
-                boolean fine;
+                boolean fine = false;
                 for(int i=0; i<rec.getEvents().size(); i++){
                     eventToCancel = rec.getEvents().get(i);
                     if (eventToCancel == null) {
@@ -477,15 +497,27 @@ public class EventManager {
         //The methos of notification is chosen by the Organizer
     }
 
-    public void prepareLocation(String venue, Service service){
+    public void prepareLocation(String venue, Service service) throws UseCaseLogicException{
+        if (currentEvent == null) {
+            String msg = "Cannot assign menu: no event selected";
+            throw new UseCaseLogicException(msg);
+        }
         currentEvent.setServiceLocation(venue, service);
     }
 
-    public void pinEventAndMenus(List<Menu> menus){
+    public void pinEventAndMenus(List<Menu> menus) throws UseCaseLogicException{
+        if (currentEvent == null) {
+            String msg = "Cannot assign menu: no event selected";
+            throw new UseCaseLogicException(msg);
+        }
         currentEvent.addNote(menus);
     }
 
-    public void endEvent(){
+    public void endEvent() throws UseCaseLogicException{
+        if (currentEvent == null) {
+            String msg = "Cannot assign menu: no event selected";
+            throw new UseCaseLogicException(msg);
+        }
         currentEvent.setStatus("Ended");
     }
 

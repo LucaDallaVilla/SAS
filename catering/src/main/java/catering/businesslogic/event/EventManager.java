@@ -210,47 +210,73 @@ public class EventManager {
     }
 
     /**
-     * Modifies an existing event
+     * Modifies an existing event respecting contract pre-conditions and post-conditions.
      *
      * @param eventId ID of the event to modify
-     * @param name    New name for the event
-     * @param date    New date for the event
-     * @return true if modified successfully, false otherwise
+     * @param newEventSheet The new data for the event
+     * @return true if a penalty is required due to late modifications, false otherwise
+     * @throws UseCaseLogicException if preconditions are not met
      */
-    public boolean editEvent(int eventId, EventSheet newEventSheet) {
-        if(newEventSheet == null){
+    public boolean editEvent(int eventId, EventSheet newEventSheet) throws UseCaseLogicException {
+        if (newEventSheet == null) {
             return false;
         }
 
         EventSheet event = EventSheet.loadById(eventId);
-
-        if (event != null) {
-            int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-event.getNumParticipants())/(newEventSheet.getNumParticipants()*100);
-            boolean fine = fineConditions.checkDaysNotice(event.getDateStart()) && fineConditions.checkParticipantsVariation(deltaParticipants);
-            event.edit(newEventSheet);
-
-            // Notify all receivers
-            notifyEventModified(event);
-
-            // Update selected event if it's the same one
-            if (currentEvent != null && currentEvent.getId() == eventId) {
-                this.currentEvent = event;
-            }
-            return fine;
+        if (event == null) {
+            throw new UseCaseLogicException("L'evento specificato non esiste.");
         }
 
-        return false;
+        String status = event.getStatus();
+        if (status == null) {
+            throw new UseCaseLogicException("Stato dell'evento risulta nullo.");
+        }
+
+        if (status.equals("evento chiuso")) {
+            throw new UseCaseLogicException("Stato dell'evento non valido per la modifica. Lo stato deve essere 'In compilazione', 'Scheda salvata', 'Chef assegnato' o 'In corso'.");
+        }
+
+        // Pre-condizioni: verifica l'esistenza dei servizi richiesti
+        if (event.getServices() == null || newEventSheet.getServices() == null) {
+            throw new UseCaseLogicException("I servizi previsti dalla scheda evento devono essere presenti e validi.");
+        }
+
+        // Post-condizioni: calcolo necessità di una penale se "In corso" o in base a variazioni
+        boolean requiresPenalty = false;
+        if (status.equals("In corso")) {
+            requiresPenalty = true;
+        } else {
+            int deltaParticipants = 0;
+            if (event.getNumParticipants() > 0) {
+                deltaParticipants = Math.abs(newEventSheet.getNumParticipants() - event.getNumParticipants()) * 100 / event.getNumParticipants();
+            }
+            // Controllo standard dei criteri di penale se lo stato originario non era forzatamente già "In corso"
+            requiresPenalty = fineConditions.checkDaysNotice(event.getDateStart()) || fineConditions.checkParticipantsVariation(deltaParticipants);
+        }
+
+        // Applicazione modifiche
+        event.edit(newEventSheet);
+
+        // Notifica ai receiver
+        notifyEventModified(event);
+
+        // Aggiorna la referenza locale se l'evento è quello correntemente selezionato
+        if (currentEvent != null && currentEvent.getId() == eventId) {
+            this.currentEvent = event;
+        }
+
+        return requiresPenalty;
     }
 
     /**
-     * Modifies an existing event
+     * Modifies an existing recurring event
      *
      * @param eventId ID of the event to modify
-     * @param name    New name for the event
-     * @param date    New date for the event
-     * @return true if modified successfully, false otherwise
+     * @param newEventSheet    New data for the event
+     * @param singleEvent Boolean flag for single event vs entire series
+     * @return true if penalty applied, false otherwise
      */
-    public boolean editRecurringEvent(int eventId, EventSheet newEventSheet, boolean SingleEvent) {
+    public boolean editRecurringEvent(int eventId, EventSheet newEventSheet, boolean singleEvent) {
         if(newEventSheet == null){return false;}
 
         EventSheet event = EventSheet.loadById(eventId);
@@ -258,15 +284,15 @@ public class EventManager {
 
         RecurringEventSheet recur = event.getRecurringSeries();
         if(recur == null) {return false;}
-        
-        if(!SingleEvent){
+
+        if(!singleEvent){
             boolean fine = false;
             for(EventSheet e : recur.getEvents()){
                 if (e != null) {
-                    
+
                     if(fine == false){
                         int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-e.getNumParticipants())/(newEventSheet.getNumParticipants()*100);
-                        fine = fineConditions.checkDaysNotice(e.getDateStart()) && fineConditions.checkParticipantsVariation(deltaParticipants);
+                        fine = fineConditions.checkDaysNotice(e.getDateStart()) || fineConditions.checkParticipantsVariation(deltaParticipants);
                     }
                     e.edit(newEventSheet);
 
@@ -282,13 +308,11 @@ public class EventManager {
             return fine;
         }else{
             int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-event.getNumParticipants())/(newEventSheet.getNumParticipants()*100);
-            boolean fine = fineConditions.checkDaysNotice(event.getDateStart()) && fineConditions.checkParticipantsVariation(deltaParticipants);
+            boolean fine = fineConditions.checkDaysNotice(event.getDateStart()) || fineConditions.checkParticipantsVariation(deltaParticipants);
             event.edit(newEventSheet);
 
             // Notify all receivers
             notifyEventModified(event);
-
-            
 
             // Update selected event if it's the same one
             if (currentEvent != null && currentEvent.getId() == eventId) {
@@ -331,7 +355,7 @@ public class EventManager {
      * Deletes an event and all its associated services
      *
      * @param eventId ID of the event to delete
-     * @return true if deleted successfully, false otherwise
+     * @return true if penalty applied, false otherwise
      */
     public boolean deleteEvent(int eventId) {
         try {
@@ -363,7 +387,7 @@ public class EventManager {
                     if (eventToDelete == null) {
                         return false;
                     }
-                    
+
                     if(!fine){fine = fineConditions.checkDaysNotice(eventToDelete.getDateStart());}
 
                     // Notify all receivers (EventPersistence will delete from DB)
@@ -389,7 +413,7 @@ public class EventManager {
 
                 return fine;
             }
-            
+
         } catch (Exception e) {
             return false;
         }
@@ -493,8 +517,42 @@ public class EventManager {
         return true;
     }
 
-    public void suggestNewMenu(Menu menu, Service service){
-        //The methos of notification is chosen by the Organizer
+    /**
+     * Proposes a menu modification and notifies the Chef, altering the event state.
+     *
+     * @param menu    The suggested menu
+     * @param service The service involved
+     * @throws UseCaseLogicException se i requisiti e le pre-condizioni non sono soddisfatti.
+     */
+    public void suggestNewMenu(Menu menu, Service service) throws UseCaseLogicException {
+        // Pre-condizione: l'evento corrente deve essere valido e selezionato
+        if (currentEvent == null) {
+            throw new UseCaseLogicException("Nessun evento selezionato. Operazione non permessa.");
+        }
+
+        // Pre-condizione: verifica parametri in ingresso
+        if (menu == null || service == null) {
+            throw new UseCaseLogicException("Parametri non validi: menu e servizio devono esistere.");
+        }
+
+        String status = currentEvent.getStatus();
+        if (status == null) {
+            status = "";
+        }
+
+        // Pre-condizione: lo stato dell'evento deve essere 'Personale prenotato'
+        if (!status.equals("Personale prenotato")) {
+            throw new UseCaseLogicException("Impossibile proporre un nuovo menu: lo stato dell'evento non è 'Personale prenotato'.");
+        }
+
+        // Post-condizione 1: notifica di proposta allo chef (qui simulata logica di sistema)
+        System.out.println("SISTEMA - Inviata notifica di proposta di modifica menu allo Chef per il servizio: " + service.getName());
+
+        // Post-condizione 2: sovrascrittura dello stato su "Evento in corso"
+        currentEvent.setStatus("Evento in corso");
+
+        // Notifica ai listener l'avvenuta modifica di stato sull'evento
+        notifyEventModified(currentEvent);
     }
 
     public void prepareLocation(String venue, Service service) throws UseCaseLogicException{
@@ -518,7 +576,7 @@ public class EventManager {
             String msg = "Cannot assign menu: no event selected";
             throw new UseCaseLogicException(msg);
         }
-        currentEvent.setStatus("Ended");
+        currentEvent.setStatus("evento chiuso");
     }
 
     // Notification methods to avoid code duplication

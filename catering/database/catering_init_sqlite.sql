@@ -1046,7 +1046,7 @@ INSERT INTO Services (
     time_end, 
     location
 ) VALUES (
-    1,                          -- Event ID
+    1,                         -- Event ID
     'Cena di Gala',             -- Service name in Italian
     0,                          -- Not approved yet (0)
     date('2025-06-15'),         -- Service date

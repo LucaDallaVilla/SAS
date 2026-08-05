@@ -1,12 +1,12 @@
 package catering.businesslogic.event;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.sql.Time;
+import java.sql.Date;
 
 // simple data structure to group the service data
 public record ServiceData (
         String type,
-        LocalDate date,
-        LocalTime timeStart,
-        LocalTime timeEnd
+        Date date,
+        Time timeStart,
+        Time timeEnd
 ) {}

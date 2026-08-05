@@ -27,7 +27,6 @@ public class KitchenTaskManager {
     }
 
     public SummarySheet generateSummarySheet(EventSheet event, Service service) throws UseCaseLogicException {
-
         User user = CatERing.getInstance().getUserManager().getCurrentUser();
 
         if (!user.isChef())

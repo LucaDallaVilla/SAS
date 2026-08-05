@@ -1,8 +1,12 @@
 package catering.businesslogic.event;
 
-import java.sql.*;
-import java.util.*;
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import catering.businesslogic.menu.Menu;
 import catering.businesslogic.menu.MenuItem;
@@ -13,7 +17,6 @@ import catering.persistence.ResultHandler;
  * Represents a service in an event in the catering system.
  */
 public class Service {
-
     private int id;
     private String name;
     private Date date;
@@ -21,15 +24,32 @@ public class Service {
     private Time timeEnd;
     private String location;
     private Menu menu;
+    private String type;
+    private String status;
+    private EventSheet event; // Riferimento diretto all'evento (associazione "prevede")
+    private int eventId; // Mantenuto per agevolare il caricamento dal DB prima di risolvere la referenza
+    private List<Staff> staffList; // Riferimento al personale (associazione "works for")
 
     public Service() {
+        this.staffList = new ArrayList<>();
     }
 
     public Service(String name) {
+        this();
         this.name = name;
     }
 
-    // Basic getters and setters
+    public Service(ServiceData data) {
+        this.type = data.type();
+        this.date = data.date();
+        this.timeStart = data.timeStart();
+        this.timeEnd = data.timeEnd();
+    }
+
+    // ========================================================================
+    // GETTERS & SETTERS
+    // ========================================================================
+
     public int getId() {
         return id;
     }
@@ -78,6 +98,37 @@ public class Service {
         this.location = location;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public EventSheet getEvent() {
+        return event;
+    }
+
+    public void setEvent(EventSheet event) {
+        this.event = event;
+        if (event != null) {
+            this.eventId = event.getId();
+        }
+    }
+
+    public int getEventId() {
+        return (event != null) ? event.getId() : eventId;
+    }
+
+    public List<Staff> getStaffList() {
+        return staffList;
+    }
+
     public int getMenuId() {
         return (menu != null) ? menu.getId() : 0;
     }
@@ -90,6 +141,66 @@ public class Service {
         this.menu = menu;
     }
 
+    public ArrayList<MenuItem> getMenuItems() {
+        if (this.menu == null) {
+            return new ArrayList<>();
+        }
+        return this.menu.getItems();
+    }
+
+    // ========================================================================
+    // DOMAIN LOGIC METHODS (dal DCD)
+    // ========================================================================
+
+    /**
+     * Modifica lo stato corrente del servizio.
+     * @param status Il nuovo stato del servizio
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     * Aggiorna la location del servizio corrente.
+     * @param venue Il luogo/sala dell'evento
+     */
+    public void createLocation(String venue) {
+        this.location = venue;
+    }
+
+    /**
+     * Aggiunge una lista di personale alla lista preesistente.
+     * @param staff Lista di Staff da assegnare al servizio
+     */
+    public void addStaff(List<Staff> staff) {
+        if (this.staffList == null) {
+            this.staffList = new ArrayList<>();
+        }
+        if (staff != null) {
+            this.staffList.addAll(staff);
+        }
+    }
+
+    /**
+     * Aggiorna i dati del servizio basandosi su un'altra istanza.
+     * @param newService Il servizio con i nuovi dati
+     */
+    public void edit(Service newService) {
+        if (newService == null) return;
+
+        this.name = newService.getName();
+        this.date = newService.getDate();
+        this.timeStart = newService.getTimeStart();
+        this.timeEnd = newService.getTimeEnd();
+        this.location = newService.getLocation();
+        this.type = newService.getType();
+        // Lo stato non viene modificato qui, poiché segue un ciclo di vita specifico
+    }
+
+    // ========================================================================
+    // MENU MANAGEMENT
+    // ========================================================================
+
     public void approveMenu() {
         if (this.menu == null)
             return;
@@ -100,51 +211,6 @@ public class Service {
 
     public void removeMenu() {
         this.menu = null;
-    }
-
-    public ArrayList<MenuItem> getMenuItems() {
-        if (this.menu == null) {
-            return new ArrayList<>();
-        }
-        return this.menu.getItems();
-    }
-
-    // Database operations
-    public void saveNewService() {
-        String query = "INSERT INTO Services (event_id, name, service_date, time_start, time_end, location) VALUES (?, ?, ?, ?, ?, ?)";
-
-        // Convert date to timestamp for storage
-        Long dateTimestamp = (this.getDate() != null) ? this.getDate().getTime() : null;
-
-        PersistenceManager.executeUpdate(query,
-                this.getEventId(),
-                this.getName(),
-                dateTimestamp,
-                this.getTimeStart(),
-                this.getTimeEnd(),
-                this.getLocation());
-
-        // Get the ID of the newly inserted service
-        this.setId(PersistenceManager.getLastId());
-    }
-
-    public void updateService() {
-        String query = "UPDATE Services SET name = ?, service_date = ?, time_start = ?, time_end = ?, location = ? WHERE id = ?";
-
-        Long dateTimestamp = (this.getDate() != null) ? this.getDate().getTime() : null;
-
-        PersistenceManager.executeUpdate(query,
-                this.getName(),
-                dateTimestamp,
-                this.getTimeStart(),
-                this.getTimeEnd(),
-                this.getLocation(),
-                this.getId());
-    }
-
-    public boolean deleteService() {
-        String query = "DELETE FROM Services WHERE id = ?";
-        return PersistenceManager.executeUpdate(query, this.getId()) > 0;
     }
 
     public void assignMenuToService(Menu menu) {
@@ -161,7 +227,49 @@ public class Service {
         PersistenceManager.executeUpdate(query, this.getId());
     }
 
-    // Static methods for data loading
+    // ========================================================================
+    // DATABASE OPERATIONS (Persistence)
+    // ========================================================================
+
+    public void saveNewService() {
+        String query = "INSERT INTO Services (event_id, name, service_date, time_start, time_end, location, type, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        Long dateTimestamp = (this.getDate() != null) ? this.getDate().getTime() : null;
+
+        PersistenceManager.executeUpdate(query,
+                this.getEventId(),
+                this.getName(),
+                dateTimestamp,
+                this.getTimeStart(),
+                this.getTimeEnd(),
+                this.getLocation(),
+                this.getType(),
+                this.getStatus());
+
+        this.setId(PersistenceManager.getLastId());
+    }
+
+    public void updateService() {
+        String query = "UPDATE Services SET name = ?, service_date = ?, time_start = ?, time_end = ?, location = ?, type = ?, status = ? WHERE id = ?";
+
+        Long dateTimestamp = (this.getDate() != null) ? this.getDate().getTime() : null;
+
+        PersistenceManager.executeUpdate(query,
+                this.getName(),
+                dateTimestamp,
+                this.getTimeStart(),
+                this.getTimeEnd(),
+                this.getLocation(),
+                this.getType(),
+                this.getStatus(),
+                this.getId());
+    }
+
+    public boolean deleteService() {
+        String query = "DELETE FROM Services WHERE id = ?";
+        return PersistenceManager.executeUpdate(query, this.getId()) > 0;
+    }
+
     public static ArrayList<Service> loadServicesForEvent(int eventId) {
         ArrayList<Service> services = new ArrayList<>();
         String query = "SELECT * FROM Services WHERE event_id = ? ORDER BY service_date, time_start";
@@ -172,6 +280,8 @@ public class Service {
                 Service s = new Service();
                 s.id = rs.getInt("id");
                 s.name = rs.getString("name");
+                // s.type = rs.getString("type");
+                // s.status = rs.getString("status");
 
                 try {
                     s.date = Date.valueOf(rs.getString("service_date"));
@@ -254,10 +364,14 @@ public class Service {
         return serviceFound[0] ? serviceHolder[0] : null;
     }
 
+    // ========================================================================
+    // UTILITY METHODS
+    // ========================================================================
+
     @Override
     public String toString() {
-        return "Service [id=" + id + ", name=" + name + ", date=" + date + ", location=" + location +
-                ", menu=" + (menu != null ? menu.getTitle() : "none") + "]";
+        return "Service [id=" + id + ", name=" + name + ", type=" + type + ", status=" + status +
+                ", date=" + date + ", location=" + location + ", menu=" + (menu != null ? menu.getTitle() : "none") + "]";
     }
 
     @Override
@@ -269,56 +383,47 @@ public class Service {
 
         Service other = (Service) obj;
 
-        // If both sections have valid IDs, compare by ID
+        // Compare by ID if both are valid
         if (this.id > 0 && other.id > 0) {
             return this.id == other.id;
         }
-        
-        // Otherwise, compare by name and items
+
         boolean nameMatch = (this.name == null && other.name == null) ||
                 (this.name != null && this.name.equals(other.name));
+        if (!nameMatch) return false;
 
-        // If names don't match, sections are not equal
-        if (!nameMatch)
-            return false;
-
-        // If dates don't match, sections are not equal
         boolean dateMatch = (this.date == null && other.date == null) ||
-        (this.date != null && this.date.equals(other.date));
+                (this.date != null && this.date.equals(other.date));
+        if (!dateMatch) return false;
 
-        if (!dateMatch)
-            return false;
-
-        // If times don't match, sections are not equal
         boolean timeStartMatch = (this.timeStart == null && other.timeStart == null) ||
-        (this.timeStart != null && this.timeStart.equals(other.timeStart));
+                (this.timeStart != null && this.timeStart.equals(other.timeStart));
+        if (!timeStartMatch) return false;
 
-        if (!timeStartMatch)
-            return false;
-        
         boolean timeEndMatch = (this.timeEnd == null && other.timeEnd == null) ||
-            (this.timeEnd != null && this.timeEnd.equals(other.timeEnd));
-    
-        if (!timeEndMatch)
-            return false;        
+                (this.timeEnd != null && this.timeEnd.equals(other.timeEnd));
+        if (!timeEndMatch) return false;
 
-        // If locations don't match, sections are not equal
         boolean locationMatch = (this.location == null && other.location == null) ||
-        (this.location != null && this.location.equals(other.location));
+                (this.location != null && this.location.equals(other.location));
+        if (!locationMatch) return false;
 
-        if (!locationMatch)
-            return false;
+        /*
+        boolean typeMatch = (this.type == null && other.type == null) ||
+                (this.type != null && this.type.equals(other.type));
+        if (!typeMatch) return false;
 
-        // If locations don't match, sections are not equal
+        boolean statusMatch = (this.status == null && other.status == null) ||
+                (this.status != null && this.status.equals(other.status));
+        if (!statusMatch) return false;
+        */
+
         boolean menuMatch = (this.menu == null && other.menu == null) ||
-        (this.menu != null && this.menu.equals(other.menu));
+                (this.menu != null && this.menu.equals(other.menu));
+        if (!menuMatch) return false;
 
-        if (!menuMatch)
-            return false;
-
-        // If events don't match, sections are not equal
-        if (this.eventId > 0 && other.eventId > 0) {
-            return this.eventId == other.eventId;
+        if (this.getEventId() > 0 && other.getEventId() > 0) {
+            return this.getEventId() == other.getEventId();
         }
 
         return true;

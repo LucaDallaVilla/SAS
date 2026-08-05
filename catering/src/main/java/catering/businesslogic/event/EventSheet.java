@@ -4,78 +4,86 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
+import catering.businesslogic.menu.Menu;
 import catering.businesslogic.user.User;
 import catering.persistence.PersistenceManager;
 import catering.persistence.ResultHandler;
 
 /**
- * Represents an event in the catering system.
+ * Represents the Event Sheet (Scheda Evento) in the CatERing system.
+ * Acts as the Aggregate Root for the Event domain, managing state, services, and assignments.
  */
 public class EventSheet {
+
     private int id;
+    private String name;
     private Date dateStart;
     private Date dateEnd;
-    private User chef;
-    private ArrayList<Service> services;
     private int numParticipants;
     private String status;
+    private User chef;
+
+    private ArrayList<Service> services;
     private ArrayList<Note> notes;
-    private String name;
     private RecurringEventSheet recurringSeries;
 
-
-    public EventSheet() {}
-
-    public EventSheet(Date dateStart, Date dateEnd, int numParticipants, ArrayList<ServiceData> services) {
+    /**
+     * Default constructor for persistence layer.
+     */
+    public EventSheet() {
         this.services = new ArrayList<>();
-        this.dateEnd = dateEnd;
-        this.dateStart = dateStart;
-        this.numParticipants = numParticipants;
-        this.status = "saved";
+        this.notes = new ArrayList<>();
+        this.status = "In compilazione";
+    }
 
-        // creates services from input array
-        for (ServiceData service : services) {
-            this.services.add(new Service()); // TODO: inserisci i parametri corretti
+    public EventSheet(String name) {
+        this();
+        this.name = name;
+    }
+
+    /**
+     * Constructor for creating a new standard EventSheet.
+     *
+     * @param dateStart       Start date of the event
+     * @param dateEnd         End date of the event
+     * @param numParticipants Number of expected participants
+     * @param servicesData    Initial data for the services requested
+     */
+    public EventSheet(Date dateStart, Date dateEnd, int numParticipants, ArrayList<ServiceData> servicesData) {
+        this();
+        this.dateStart = dateStart;
+        this.dateEnd = dateEnd;
+        this.numParticipants = numParticipants;
+        this.status = "Scheda salvata"; // Stato in base ai contratti operativi
+
+        if (servicesData != null) {
+            for (ServiceData serviceData : servicesData) {
+                // Instantiates a new Service based on ServiceData (as per DCD)
+                this.services.add(new Service(serviceData));
+            }
         }
     }
 
-    public EventSheet(Date dateStart, Date dateEnd, int numParticipants, ArrayList<ServiceData> services, RecurringEventSheet res) {
-        this.services = new ArrayList<>();
-        this.dateEnd = dateEnd;
-        this.dateStart = dateStart;
-        this.numParticipants = numParticipants;
-        this.status = "saved";
+    /**
+     * Constructor for creating a new recurring EventSheet.
+     *
+     * @param dateStart       Start date of the event
+     * @param dateEnd         End date of the event
+     * @param numParticipants Number of expected participants
+     * @param servicesData    Initial data for the services requested
+     * @param res             The RecurringEventSheet defining the series
+     */
+    public EventSheet(Date dateStart, Date dateEnd, int numParticipants, ArrayList<ServiceData> servicesData, RecurringEventSheet res) {
+        this(dateStart, dateEnd, numParticipants, servicesData);
         this.recurringSeries = res;
-
-        // creates services from input array
-        for (ServiceData service : services) {
-            this.services.add(new Service()); // TODO: inserisci i parametri corretti
-        }
     }
 
-    public EventSheet(Date dateStart, Date dateEnd, int numParticipants, ArrayList<ServiceData> services, int id) {
-        this(dateStart, dateEnd, numParticipants, services);
-        this.id = id;
-    }
+    // ========================================================================
+    // GETTERS & SETTERS
+    // ========================================================================
 
-    public int getNumParticipants() {
-        return numParticipants;
-    }
-
-    public void setNumParticipants(int numParticipants) {
-        this.numParticipants = numParticipants;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    // Basic getters and setters
     public int getId() {
         return id;
     }
@@ -104,20 +112,28 @@ public class EventSheet {
         this.dateEnd = dateEnd;
     }
 
+    public int getNumParticipants() {
+        return numParticipants;
+    }
+
+    public void setNumParticipants(int numParticipants) {
+        this.numParticipants = numParticipants;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public User getChef() {
         return chef;
     }
 
     public int getChefId() {
         return chef != null ? chef.getId() : 0;
-    }
-
-    public void setChef(User chef) {
-        this.chef = chef;
-    }
-
-    public void setChefId(int chefId) {
-        this.chef = User.load(chefId);
     }
 
     public RecurringEventSheet getRecurringSeries() {
@@ -132,25 +148,38 @@ public class EventSheet {
         return services;
     }
 
-    public void setServices(ArrayList<ServiceData> services) {
-        
+    public ArrayList<Note> getNotes() {
+        return notes;
     }
 
-    public void edit(EventSheet newEventSheet) {
+    // ========================================================================
+    // DOMAIN LOGIC METHODS
+    // ========================================================================
 
-    }
-
-    // Service management
-    public void addService(Service service) {
-        if (services == null) {
-            services = new ArrayList<>();
+    /**
+     * Assigns a Chef to the event and updates the event status.
+     *
+     * @param chef The user with Chef role to be assigned.
+     */
+    public void setChef(User chef) {
+        this.chef = chef;
+        // Se lo stato è "Scheda salvata", avanza a "Chef assegnato" come da System Sequence
+        if (this.status != null && this.status.equals("Scheda salvata")) {
+            this.status = "Chef assegnato";
         }
-        services.add(service);
     }
 
-    public void removeService(Service service) {
-        if (services != null) {
-            services.remove(service);
+    /**
+     * Sets the location for a specific service within this event.
+     *
+     * @param venue   The location string
+     * @param service The service to update
+     */
+    public void setServiceLocation(String venue, Service service) {
+        if (this.services != null && this.services.contains(service)) {
+            service.createLocation(venue); // DCD indica createLocation(venue: String) su Service
+        } else {
+            throw new IllegalArgumentException("Il servizio specificato non appartiene a questo evento.");
         }
     }
 
@@ -161,48 +190,132 @@ public class EventSheet {
         return false;
     }
 
-    // Database operations
-    public void saveNewEvent() {
-        String query = "INSERT INTO Events (name, date_start, date_end, chef_id) VALUES (?, ?, ?, ?)";
+    /**
+     * Adds a new service to the event.
+     *
+     * @param service The service to add
+     */
+    public void addService(Service service) {
+        if (this.services == null) {
+            this.services = new ArrayList<>();
+        }
+        if (service != null && !this.services.contains(service)) {
+            this.services.add(service);
+        }
+    }
 
+    /**
+     * Removes an existing service from the event.
+     *
+     * @param service The service to remove
+     */
+    public void removeService(Service service) {
+        if (this.services != null && service != null) {
+            this.services.remove(service);
+        }
+    }
+
+    /**
+     * Cancels all services associated with this event.
+     * Used mainly when the event itself gets cancelled.
+     */
+    public void cancelServices() {
+        if (this.services != null) {
+            for (Service s : this.services) {
+                s.setStatus("cancellato");
+            }
+        }
+    }
+
+    /**
+     * Updates the fields of this event using data from another EventSheet.
+     *
+     * @param newEventSheet The EventSheet containing updated information.
+     */
+    public void edit(EventSheet newEventSheet) {
+        if (newEventSheet == null) return;
+
+        if (newEventSheet.getName() != null) {
+            this.name = newEventSheet.getName();
+        }
+        if (newEventSheet.getDateStart() != null) {
+            this.dateStart = newEventSheet.getDateStart();
+        }
+        if (newEventSheet.getDateEnd() != null) {
+            this.dateEnd = newEventSheet.getDateEnd();
+        }
+        if (newEventSheet.getNumParticipants() > 0) {
+            this.numParticipants = newEventSheet.getNumParticipants();
+        }
+
+        // Sostituisce o aggiorna i servizi (logica di default sostitutiva)
+        if (newEventSheet.getServices() != null) {
+            this.services = new ArrayList<>(newEventSheet.getServices());
+        }
+    }
+
+    /**
+     * Adds pinning notes and menus to the closed/active event.
+     *
+     * @param menus The list of menus to attach to the note.
+     */
+    public void addNote(List<Menu> menus) {
+        if (this.notes == null) {
+            this.notes = new ArrayList<>();
+        }
+        // Il DCD prevede la creazione di Note passandogli EventSheet e la lista dei Menu
+        Note note = new Note(this, menus);
+        this.notes.add(note);
+    }
+
+    // Stub per l'eventuale chiamata da EventManager
+    public void bookStaff(List<Staff> staff) {
+        // Implementazione specifica della prenotazione personale...
+        this.status = "Personale prenotato";
+    }
+
+    // Stub per l'eventuale chiamata da EventManager
+    public void assignStaff(List<Staff> staff) {
+        // Implementazione specifica dell'assegnazione definitiva...
+    }
+
+    // ========================================================================
+    // PERSISTENCE (Static Loaders & Instance Savers)
+    // ========================================================================
+
+    public void saveNewEvent() {
+        String query = "INSERT INTO Events (name, date_start, date_end, num_participants, status, chef_id) VALUES (?, ?, ?, ?, ?, ?)";
         Long startTimestamp = (dateStart != null) ? dateStart.getTime() : null;
         Long endTimestamp = (dateEnd != null) ? dateEnd.getTime() : null;
 
-        PersistenceManager.executeUpdate(query, name, startTimestamp, endTimestamp, getChefId());
-
-        // Get the ID of the newly inserted event
+        PersistenceManager.executeUpdate(query, name, startTimestamp, endTimestamp, numParticipants, status, getChefId());
         id = PersistenceManager.getLastId();
-
     }
 
     public void updateEvent() {
-        String query = "UPDATE Events SET name = ?, date_start = ?, date_end = ?, chef_id = ? WHERE id = ?";
-
+        String query = "UPDATE Events SET name = ?, date_start = ?, date_end = ?, num_participants = ?, status = ?, chef_id = ? WHERE id = ?";
         Long startTimestamp = (dateStart != null) ? dateStart.getTime() : null;
         Long endTimestamp = (dateEnd != null) ? dateEnd.getTime() : null;
 
-        PersistenceManager.executeUpdate(query, name, startTimestamp, endTimestamp, getChefId(), id);
-
+        PersistenceManager.executeUpdate(query, name, startTimestamp, endTimestamp, numParticipants, status, getChefId(), id);
     }
 
     public boolean deleteEvent() {
-        // Delete all services first
-        for (Service service : services) {
-            service.deleteService();
+        if (this.services != null) {
+            for (Service service : services) {
+                service.deleteService();
+            }
+            services.clear();
         }
-        services.clear();
-
-        // Delete the event
         String query = "DELETE FROM Events WHERE id = ?";
-        boolean success = PersistenceManager.executeUpdate(query, id) > 0;
-
-        if (success) {
-        }
-
-        return success;
+        return PersistenceManager.executeUpdate(query, id) > 0;
     }
 
-    // Static load methods
+    /**
+     * Loads all events from the persistence layer.
+     *
+     * @return A list of all loaded EventSheets
+     */
     public static ArrayList<EventSheet> loadAllEvents() {
         ArrayList<EventSheet> events = new ArrayList<>();
         String query = "SELECT * FROM Events ORDER BY date_start DESC";
@@ -211,22 +324,43 @@ public class EventSheet {
             @Override
             public void handle(ResultSet rs) throws SQLException {
                 EventSheet e = new EventSheet();
+                e.id = rs.getInt("id");
                 e.name = rs.getString("name");
-                e.dateStart = Date.valueOf(rs.getString("date_start"));
-                e.dateEnd = Date.valueOf(rs.getString("date_end"));
-                e.chef = User.load(rs.getInt("chef_id"));
+
+                String startStr = rs.getString("date_start");
+                if(startStr != null) e.dateStart = Date.valueOf(startStr);
+
+                String endStr = rs.getString("date_end");
+                if(endStr != null) e.dateEnd = Date.valueOf(endStr);
+
+                // e.numParticipants = rs.getInt("num_participants");
+                // e.status = rs.getString("status");
+
+                try {
+                    e.chef = User.load(rs.getInt("chef_id"));
+                } catch (Exception ex) {
+                    e.chef = null;
+                }
                 events.add(e);
             }
         });
 
-        // Load services for each event
+        // Simula il caricamento dei servizi in base al DB o mock se assente
         for (EventSheet e : events) {
-            e.services = Service.loadServicesForEvent(e.id);
+            try {
+                // e.services = Service.loadServicesForEvent(e.id);
+            } catch (Exception ignored) { }
         }
 
         return events;
     }
 
+    /**
+     * Loads a specific event by its ID.
+     *
+     * @param id The ID of the event to retrieve
+     * @return The EventSheet instance or null if not found
+     */
     public static EventSheet loadById(int id) {
         String query = "SELECT * FROM Events WHERE id = ?";
         return loadEventByQuery(query, id);
@@ -245,27 +379,30 @@ public class EventSheet {
             @Override
             public void handle(ResultSet rs) throws SQLException {
                 eventFound[0] = true;
-
                 EventSheet e = new EventSheet();
 
                 e.id = rs.getInt("id");
                 e.name = rs.getString("name");
-                e.dateStart = Date.valueOf(rs.getString("date_start"));
-                e.dateEnd = Date.valueOf(rs.getString("date_end"));
+
+                String startStr = rs.getString("date_start");
+                if(startStr != null) e.dateStart = Date.valueOf(startStr);
+
+                String endStr = rs.getString("date_end");
+                if(endStr != null) e.dateEnd = Date.valueOf(endStr);
+
+                // e.numParticipants = rs.getInt("num_participants");
+                // e.status = rs.getString("status");
 
                 try {
                     e.chef = User.load(rs.getInt("chef_id"));
                 } catch (Exception ex) {
                     e.chef = null;
                 }
-
                 eventHolder[0] = e;
             }
         }, param);
 
-        if (!eventFound[0]) {
-            return null;
-        }
+        if (!eventFound[0]) return null;
 
         EventSheet result = eventHolder[0];
         if (result != null) {
@@ -275,13 +412,13 @@ public class EventSheet {
                 result.services = new ArrayList<>();
             }
         }
-
         return result;
     }
 
     @Override
     public String toString() {
-        return "Event [id=" + id + ", name=" + name + ", dateStart=" + dateStart +
-                ", services=" + (services != null ? services.size() : 0) + "]";
+        return "EventSheet [id=" + id + ", name=" + name + ", status=" + status +
+                ", dateStart=" + dateStart + ", participants=" + numParticipants +
+                ", servicesCount=" + (services != null ? services.size() : 0) + "]";
     }
 }

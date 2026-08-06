@@ -22,7 +22,7 @@ public class EventSheet {
     private Date dateStart;
     private Date dateEnd;
     private int numParticipants;
-    private String status;
+    private EventStatus status;
     private User chef;
 
     private ArrayList<Service> services;
@@ -35,7 +35,7 @@ public class EventSheet {
     public EventSheet() {
         this.services = new ArrayList<>();
         this.notes = new ArrayList<>();
-        this.status = "In compilazione";
+        this.status = EventStatus.SCHEDA_SALVATA;
     }
 
     public EventSheet(String name) {
@@ -56,7 +56,7 @@ public class EventSheet {
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
         this.numParticipants = numParticipants;
-        this.status = "Scheda salvata"; // Stato in base ai contratti operativi
+        this.status = EventStatus.SCHEDA_SALVATA; // Stato in base ai contratti operativi
 
         if (servicesData != null) {
             for (ServiceData serviceData : servicesData) {
@@ -120,11 +120,11 @@ public class EventSheet {
         this.numParticipants = numParticipants;
     }
 
-    public String getStatus() {
+    public EventStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(EventStatus status) {
         this.status = status;
     }
 
@@ -164,8 +164,8 @@ public class EventSheet {
     public void setChef(User chef) {
         this.chef = chef;
         // Se lo stato è "Scheda salvata", avanza a "Chef assegnato" come da System Sequence
-        if (this.status != null && this.status.equals("Scheda salvata")) {
-            this.status = "Chef assegnato";
+        if (this.status != null && this.status == EventStatus.SCHEDA_SALVATA) {
+            this.status = EventStatus.CHEF_ASSEGNATO;
         }
     }
 
@@ -248,9 +248,12 @@ public class EventSheet {
             this.numParticipants = newEventSheet.getNumParticipants();
         }
 
-        // Sostituisce o aggiorna i servizi (logica di default sostitutiva)
-        if (newEventSheet.getServices() != null) {
-            this.services = new ArrayList<>(newEventSheet.getServices());
+        // Aggiorna i servizi individualmente come da DSD (senza sostituire l'intera lista)
+        if (newEventSheet.getServices() != null && this.services != null) {
+            int max = Math.min(this.services.size(), newEventSheet.getServices().size());
+            for (int i = 0; i < max; i++) {
+                this.services.get(i).edit(newEventSheet.getServices().get(i));
+            }
         }
     }
 
@@ -271,7 +274,7 @@ public class EventSheet {
     // Stub per l'eventuale chiamata da EventManager
     public void bookStaff(List<Staff> staff) {
         // Implementazione specifica della prenotazione personale...
-        this.status = "Personale prenotato";
+        this.status = EventStatus.PERSONALE_PRENOTATO;
     }
 
     // Stub per l'eventuale chiamata da EventManager
@@ -288,7 +291,7 @@ public class EventSheet {
         Long startTimestamp = (dateStart != null) ? dateStart.getTime() : null;
         Long endTimestamp = (dateEnd != null) ? dateEnd.getTime() : null;
 
-        PersistenceManager.executeUpdate(query, name, startTimestamp, endTimestamp, numParticipants, status, getChefId());
+        PersistenceManager.executeUpdate(query, name, startTimestamp, endTimestamp, numParticipants, (status != null ? status.getStringValue() : null), getChefId());
         id = PersistenceManager.getLastId();
     }
 
@@ -297,7 +300,7 @@ public class EventSheet {
         Long startTimestamp = (dateStart != null) ? dateStart.getTime() : null;
         Long endTimestamp = (dateEnd != null) ? dateEnd.getTime() : null;
 
-        PersistenceManager.executeUpdate(query, name, startTimestamp, endTimestamp, numParticipants, status, getChefId(), id);
+        PersistenceManager.executeUpdate(query, name, startTimestamp, endTimestamp, numParticipants, (status != null ? status.getStringValue() : null), getChefId(), id);
     }
 
     public boolean deleteEvent() {
@@ -333,8 +336,8 @@ public class EventSheet {
                 String endStr = rs.getString("date_end");
                 if(endStr != null) e.dateEnd = Date.valueOf(endStr);
 
-                // e.numParticipants = rs.getInt("num_participants");
-                // e.status = rs.getString("status");
+                e.numParticipants = rs.getInt("num_participants");
+                e.setStatus(EventStatus.SCHEDA_SALVATA);
 
                 try {
                     e.chef = User.load(rs.getInt("chef_id"));
@@ -390,7 +393,7 @@ public class EventSheet {
                 String endStr = rs.getString("date_end");
                 if(endStr != null) e.dateEnd = Date.valueOf(endStr);
 
-                // e.numParticipants = rs.getInt("num_participants");
+                e.numParticipants = rs.getInt("num_participants");
                 // e.status = rs.getString("status");
 
                 try {
@@ -417,7 +420,7 @@ public class EventSheet {
 
     @Override
     public String toString() {
-        return "EventSheet [id=" + id + ", name=" + name + ", status=" + status +
+        return "EventSheet [id=" + id + ", name=" + name + ", status=" + (status != null ? status.getStringValue() : "null") +
                 ", dateStart=" + dateStart + ", participants=" + numParticipants +
                 ", servicesCount=" + (services != null ? services.size() : 0) + "]";
     }

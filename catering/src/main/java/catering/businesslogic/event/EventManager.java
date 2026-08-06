@@ -393,9 +393,15 @@ public class EventManager {
 
     public boolean deleteRecurringEvent(int eventId, boolean singleEvent){
         try {
-            RecurringEventSheet rec = EventSheet.loadById(eventId).getRecurringSeries();
+            EventSheet event = EventSheet.loadById(eventId);
+            if (event == null) {
+                return false;
+            }
+
+            RecurringEventSheet rec = event.getRecurringSeries();
             boolean fine = false;
-            if(!singleEvent){
+
+            if (!singleEvent) {
                 for(int i=0; i<rec.getEvents().size(); i++){
                     EventSheet eventToDelete = rec.getEvents().get(i);
                     if (eventToDelete == null) {
@@ -413,11 +419,8 @@ public class EventManager {
                     }
                 }
                 return fine;
-            }else{
-                EventSheet eventToDelete = EventSheet.loadById(eventId);
-                if (eventToDelete == null) {
-                    return false;
-                }
+            } else {
+                EventSheet eventToDelete = event;
 
                 // Notify all receivers (EventPersistence will delete from DB)
                 notifyEventDeleted(eventToDelete);
@@ -449,7 +452,6 @@ public class EventManager {
 
             // Clear references if this was the selected event
             eventToCancel.setStatus(EventStatus.CANCELLATO);
-
             eventToCancel.cancelServices();
 
             return fineConditions.checkDaysNotice(eventToCancel.getDateStart());

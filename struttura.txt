@@ -1,0 +1,226 @@
+catering/
+├── database
+│   ├── catering.db
+│   └── catering_init_sqlite.sql
+├── pom.xml
+├── README.md
+├── src
+│   ├── main
+│   │   └── java
+│   │       └── catering
+│   │           ├── businesslogic
+│   │           │   ├── CatERing.java
+│   │           │   ├── event
+│   │           │   │   ├── Client.java
+│   │           │   │   ├── EventManager.java
+│   │           │   │   ├── EventReceiver.java
+│   │           │   │   ├── EventSheet.java
+│   │           │   │   ├── FineConditions.java
+│   │           │   │   ├── Location.java
+│   │           │   │   ├── Note.java
+│   │           │   │   ├── RecurringEventSheet.java
+│   │           │   │   ├── ServiceData.java
+│   │           │   │   ├── Service.java
+│   │           │   │   └── Staff.java
+│   │           │   ├── kitchen
+│   │           │   │   ├── Assignment.java
+│   │           │   │   ├── KitchenTaskEventReceiver.java
+│   │           │   │   ├── KitchenTask.java
+│   │           │   │   ├── KitchenTaskManager.java
+│   │           │   │   └── SummarySheet.java
+│   │           │   ├── menu
+│   │           │   │   ├── MenuEventReceiver.java
+│   │           │   │   ├── MenuItem.java
+│   │           │   │   ├── Menu.java
+│   │           │   │   ├── MenuManager.java
+│   │           │   │   └── Section.java
+│   │           │   ├── recipe
+│   │           │   │   ├── KitchenProcess.java
+│   │           │   │   ├── Preparation.java
+│   │           │   │   ├── Recipe.java
+│   │           │   │   └── RecipeManager.java
+│   │           │   ├── shift
+│   │           │   │   ├── Shift.java
+│   │           │   │   └── ShiftManager.java
+│   │           │   ├── UseCaseLogicException.java
+│   │           │   └── user
+│   │           │       ├── User.java
+│   │           │       └── UserManager.java
+│   │           ├── persistence
+│   │           │   ├── BatchUpdateHandler.java
+│   │           │   ├── EventPersistence.java
+│   │           │   ├── KitchenTaskPersistence.java
+│   │           │   ├── MenuPersistence.java
+│   │           │   ├── PersistenceManager.java
+│   │           │   └── ResultHandler.java
+│   │           └── util
+│   │               └── LogManager.java
+│   └── test
+│       └── java
+│           └── catering
+│               └── businesslogic
+│                   ├── event
+│                   │   └── EventTest.java
+│                   ├── kitchen
+│                   │   ├── KitchenTaskManagerTest.java
+│                   │   └── SummarySheetTest.java
+│                   └── menu
+│                       ├── MenuManagerTest.java
+│                       └── MenuTest.java
+└── target
+    ├── classes
+    │   └── catering
+    │       ├── businesslogic
+    │       │   ├── CatERing.class
+    │       │   ├── event
+    │       │   │   ├── Client.class
+    │       │   │   ├── EventManager.class
+    │       │   │   ├── EventReceiver.class
+    │       │   │   ├── EventSheet$1.class
+    │       │   │   ├── EventSheet$2.class
+    │       │   │   ├── EventSheet.class
+    │       │   │   ├── FineConditions.class
+    │       │   │   ├── Location.class
+    │       │   │   ├── Note.class
+    │       │   │   ├── RecurringEventSheet.class
+    │       │   │   ├── Service$1.class
+    │       │   │   ├── Service$2.class
+    │       │   │   ├── Service.class
+    │       │   │   ├── ServiceData.class
+    │       │   │   └── Staff.class
+    │       │   ├── kitchen
+    │       │   │   ├── Assignment$1.class
+    │       │   │   ├── Assignment$2.class
+    │       │   │   ├── Assignment.class
+    │       │   │   ├── KitchenTask$1.class
+    │       │   │   ├── KitchenTask$2.class
+    │       │   │   ├── KitchenTask$3.class
+    │       │   │   ├── KitchenTask.class
+    │       │   │   ├── KitchenTaskEventReceiver.class
+    │       │   │   ├── KitchenTaskManager.class
+    │       │   │   ├── SummarySheet$1.class
+    │       │   │   ├── SummarySheet$2.class
+    │       │   │   ├── SummarySheet$3.class
+    │       │   │   └── SummarySheet.class
+    │       │   ├── menu
+    │       │   │   ├── Menu$1.class
+    │       │   │   ├── Menu$2.class
+    │       │   │   ├── Menu$3.class
+    │       │   │   ├── Menu$4.class
+    │       │   │   ├── Menu$5.class
+    │       │   │   ├── Menu$6.class
+    │       │   │   ├── Menu$7.class
+    │       │   │   ├── Menu.class
+    │       │   │   ├── MenuEventReceiver.class
+    │       │   │   ├── MenuItem$1.class
+    │       │   │   ├── MenuItem$2.class
+    │       │   │   ├── MenuItem.class
+    │       │   │   ├── MenuManager.class
+    │       │   │   ├── Section$1.class
+    │       │   │   ├── Section$2.class
+    │       │   │   ├── Section$3.class
+    │       │   │   └── Section.class
+    │       │   ├── recipe
+    │       │   │   ├── KitchenProcess.class
+    │       │   │   ├── Preparation$1.class
+    │       │   │   ├── Preparation$2.class
+    │       │   │   ├── Preparation$3.class
+    │       │   │   ├── Preparation$4.class
+    │       │   │   ├── Preparation.class
+    │       │   │   ├── Recipe$1.class
+    │       │   │   ├── Recipe$2.class
+    │       │   │   ├── Recipe$3.class
+    │       │   │   ├── Recipe$4.class
+    │       │   │   ├── Recipe$5.class
+    │       │   │   ├── Recipe.class
+    │       │   │   └── RecipeManager.class
+    │       │   ├── shift
+    │       │   │   ├── Shift$1.class
+    │       │   │   ├── Shift$2.class
+    │       │   │   ├── Shift$3.class
+    │       │   │   ├── Shift.class
+    │       │   │   └── ShiftManager.class
+    │       │   ├── UseCaseLogicException.class
+    │       │   └── user
+    │       │       ├── User$1.class
+    │       │       ├── User$2.class
+    │       │       ├── User$3.class
+    │       │       ├── User$4.class
+    │       │       ├── User$Role.class
+    │       │       ├── User.class
+    │       │       └── UserManager.class
+    │       ├── persistence
+    │       │   ├── BatchUpdateHandler.class
+    │       │   ├── EventPersistence.class
+    │       │   ├── KitchenTaskPersistence.class
+    │       │   ├── MenuPersistence.class
+    │       │   ├── PersistenceManager.class
+    │       │   └── ResultHandler.class
+    │       └── util
+    │           ├── LogManager$CustomFormatter.class
+    │           └── LogManager.class
+    ├── generated-sources
+    │   └── annotations
+    ├── generated-test-sources
+    │   └── test-annotations
+    ├── maven-status
+    │   └── maven-compiler-plugin
+    │       ├── compile
+    │       │   └── default-compile
+    │       │       ├── createdFiles.lst
+    │       │       └── inputFiles.lst
+    │       └── testCompile
+    │           └── default-testCompile
+    │               ├── createdFiles.lst
+    │               └── inputFiles.lst
+    ├── surefire-reports
+    │   ├── catering.businesslogic.event.EventTest$Aggregate.txt
+    │   ├── catering.businesslogic.event.EventTest$StaticLoaders.txt
+    │   ├── catering.businesslogic.event.EventTest.txt
+    │   ├── catering.businesslogic.kitchen.KitchenTaskManagerTest.txt
+    │   ├── catering.businesslogic.kitchen.SummarySheetTest.txt
+    │   ├── catering.businesslogic.menu.MenuManagerTest$ChooseMenuForCopy.txt
+    │   ├── catering.businesslogic.menu.MenuManagerTest$ChooseMenu.txt
+    │   ├── catering.businesslogic.menu.MenuManagerTest$CreateMenu.txt
+    │   ├── catering.businesslogic.menu.MenuManagerTest$DefineSection.txt
+    │   ├── catering.businesslogic.menu.MenuManagerTest$DeleteMenu.txt
+    │   ├── catering.businesslogic.menu.MenuManagerTest$InsertItem.txt
+    │   ├── catering.businesslogic.menu.MenuManagerTest$MoveSection.txt
+    │   ├── catering.businesslogic.menu.MenuManagerTest.txt
+    │   ├── catering.businesslogic.menu.MenuTest.txt
+    │   ├── TEST-catering.businesslogic.event.EventTest$Aggregate.xml
+    │   ├── TEST-catering.businesslogic.event.EventTest$StaticLoaders.xml
+    │   ├── TEST-catering.businesslogic.event.EventTest.xml
+    │   ├── TEST-catering.businesslogic.kitchen.KitchenTaskManagerTest.xml
+    │   ├── TEST-catering.businesslogic.kitchen.SummarySheetTest.xml
+    │   ├── TEST-catering.businesslogic.menu.MenuManagerTest$ChooseMenuForCopy.xml
+    │   ├── TEST-catering.businesslogic.menu.MenuManagerTest$ChooseMenu.xml
+    │   ├── TEST-catering.businesslogic.menu.MenuManagerTest$CreateMenu.xml
+    │   ├── TEST-catering.businesslogic.menu.MenuManagerTest$DefineSection.xml
+    │   ├── TEST-catering.businesslogic.menu.MenuManagerTest$DeleteMenu.xml
+    │   ├── TEST-catering.businesslogic.menu.MenuManagerTest$InsertItem.xml
+    │   ├── TEST-catering.businesslogic.menu.MenuManagerTest$MoveSection.xml
+    │   ├── TEST-catering.businesslogic.menu.MenuManagerTest.xml
+    │   └── TEST-catering.businesslogic.menu.MenuTest.xml
+    └── test-classes
+        └── catering
+            └── businesslogic
+                ├── event
+                │   ├── EventTest$Aggregate.class
+                │   ├── EventTest$StaticLoaders.class
+                │   └── EventTest.class
+                ├── kitchen
+                │   ├── KitchenTaskManagerTest.class
+                │   └── SummarySheetTest.class
+                └── menu
+                    ├── MenuManagerTest$ChooseMenu.class
+                    ├── MenuManagerTest$ChooseMenuForCopy.class
+                    ├── MenuManagerTest$CreateMenu.class
+                    ├── MenuManagerTest$DefineSection.class
+                    ├── MenuManagerTest$DeleteMenu.class
+                    ├── MenuManagerTest$InsertItem.class
+                    ├── MenuManagerTest$MoveSection.class
+                    ├── MenuManagerTest.class
+                    └── MenuTest.class
+
+51 directories, 173 files

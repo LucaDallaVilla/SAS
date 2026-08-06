@@ -121,7 +121,9 @@ public class EventManager {
             RecurringEventSheet res = new RecurringEventSheet(frequency, finalDate);
 
             for(int i=0; i<(ChronoUnit.DAYS.between(startDate, dateFinal))/frequency; i++){
-                EventSheet event = new EventSheet(dateStart, dateEnd, numParticipants, services, res);
+                Date iterStart = Date.valueOf(startDate.plusDays((long)i * frequency));
+                Date iterEnd = Date.valueOf(startDate.plusDays((long)i * frequency).plusDays(ChronoUnit.DAYS.between(startDate, dateEnd.toLocalDate())));
+                EventSheet event = new EventSheet(iterStart, iterEnd, numParticipants, services, res);
 
                 // Notify all receivers (EventPersistence will persist)
                 notifyEventCreated(event);
@@ -137,26 +139,37 @@ public class EventManager {
 
     public void assignChef(User chef)throws UseCaseLogicException{
         if (currentEvent == null) {
-            String msg = "Cannot assign menu: no event selected";
+            String msg = "Cannot assign chef: no event selected";
             throw new UseCaseLogicException(msg);
         }
         currentEvent.setChef(chef);
+        notifyCuocoAssegnato(null, chef);
     }
 
     public void bookStaff(List<Staff> staff)throws UseCaseLogicException{
         if (currentEvent == null) {
-            String msg = "Cannot assign menu: no event selected";
+            String msg = "Cannot book staff: no event selected";
             throw new UseCaseLogicException(msg);
         }
         currentEvent.bookStaff(staff);
+        for (Staff s : staff) {
+            User p = new User(s.getType());
+            p.setId(s.getId());
+            notifyPersonalePrenotato(null, p);
+        }
     }
 
     public void assignStaff(List<Staff> staff)throws UseCaseLogicException{
         if (currentEvent == null) {
-            String msg = "Cannot assign menu: no event selected";
+            String msg = "Cannot assign staff: no event selected";
             throw new UseCaseLogicException(msg);
         }
         currentEvent.assignStaff(staff);
+        for (Staff s : staff) {
+            User p = new User(s.getType());
+            p.setId(s.getId());
+            notifyRuoloAssegnato(null, p, s.getRole());
+        }
     }
 
     /**
@@ -165,8 +178,8 @@ public class EventManager {
      * @param event The event to select
      */
     public void selectEvent(EventSheet event) throws UseCaseLogicException{
-        if (currentEvent == null) {
-            String msg = "Cannot assign menu: no event selected";
+        if (event == null) {
+            String msg = "Cannot select event: event is null";
             throw new UseCaseLogicException(msg);
         }
         this.currentEvent = event;
@@ -227,12 +240,12 @@ public class EventManager {
             throw new UseCaseLogicException("L'evento specificato non esiste.");
         }
 
-        String status = event.getStatus();
+        EventStatus status = event.getStatus();
         if (status == null) {
             throw new UseCaseLogicException("Stato dell'evento risulta nullo.");
         }
 
-        if (status.equals("evento chiuso")) {
+        if (status == EventStatus.CHIUSO) {
             throw new UseCaseLogicException("Stato dell'evento non valido per la modifica. Lo stato deve essere 'In compilazione', 'Scheda salvata', 'Chef assegnato' o 'In corso'.");
         }
 
@@ -243,7 +256,7 @@ public class EventManager {
 
         // Post-condizioni: calcolo necessità di una penale se "In corso" o in base a variazioni
         boolean requiresPenalty = false;
-        if (status.equals("In corso")) {
+        if (status == EventStatus.IN_CORSO) {
             requiresPenalty = true;
         } else {
             int deltaParticipants = 0;
@@ -289,15 +302,14 @@ public class EventManager {
             boolean fine = false;
             for(EventSheet e : recur.getEvents()){
                 if (e != null) {
-
                     if(fine == false){
-                        int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-e.getNumParticipants())/(newEventSheet.getNumParticipants()*100);
+                        int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-e.getNumParticipants()) * 100 / e.getNumParticipants();
                         fine = fineConditions.checkDaysNotice(e.getDateStart()) || fineConditions.checkParticipantsVariation(deltaParticipants);
                     }
                     e.edit(newEventSheet);
 
                     // Notify all receivers
-                    notifyEventModified(event);
+                    notifyEventModified(e);
 
                     // Update selected event if it's the same one
                     if (currentEvent != null && currentEvent.getId() == eventId) {
@@ -307,7 +319,7 @@ public class EventManager {
             }
             return fine;
         }else{
-            int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-event.getNumParticipants())/(newEventSheet.getNumParticipants()*100);
+            int deltaParticipants = Math.abs(newEventSheet.getNumParticipants()-event.getNumParticipants()) * 100 / event.getNumParticipants();
             boolean fine = fineConditions.checkDaysNotice(event.getDateStart()) || fineConditions.checkParticipantsVariation(deltaParticipants);
             event.edit(newEventSheet);
 
@@ -369,7 +381,9 @@ public class EventManager {
 
             boolean fine = fineConditions.checkDaysNotice(eventToDelete.getDateStart());
             // Clear references if this was the selected event
-            eventToDelete = null;
+            if (currentEvent != null && currentEvent.getId() == eventId) {
+                currentEvent = null;
+            }
 
             return fine;
         } catch (Exception e) {
@@ -394,7 +408,9 @@ public class EventManager {
                     notifyEventDeleted(eventToDelete);
 
                     // Clear references if this was the selected event
-                    eventToDelete = null;
+                    if (currentEvent != null && currentEvent.getId() == eventToDelete.getId()) {
+                        currentEvent = null;
+                    }
                 }
                 return fine;
             }else{
@@ -409,7 +425,9 @@ public class EventManager {
                 fine = fineConditions.checkDaysNotice(eventToDelete.getDateStart());
 
                 // Clear references if this was the selected event
-                eventToDelete = null;
+                if (currentEvent != null && currentEvent.getId() == eventId) {
+                    currentEvent = null;
+                }
 
                 return fine;
             }
@@ -425,9 +443,12 @@ public class EventManager {
             if (eventToCancel == null) {
                 return false;
             }
+            if (eventToCancel.getStatus() == EventStatus.CHIUSO) {
+                return false;
+            }
 
             // Clear references if this was the selected event
-            eventToCancel.setStatus("cancelled");
+            eventToCancel.setStatus(EventStatus.CANCELLATO);
 
             eventToCancel.cancelServices();
 
@@ -450,7 +471,7 @@ public class EventManager {
                     }
 
                     // Clear references if this was the selected event
-                    eventToCancel.setStatus("cancelled");
+                    eventToCancel.setStatus(EventStatus.CANCELLATO);
 
                     eventToCancel.cancelServices();
                     if(!fine){fine = fineConditions.checkDaysNotice(eventToCancel.getDateStart());}
@@ -463,7 +484,7 @@ public class EventManager {
                 }
 
                 // Clear references if this was the selected event
-                eventToCancel.setStatus("cancelled");
+                eventToCancel.setStatus(EventStatus.CANCELLATO);
 
                 eventToCancel.cancelServices();
 
@@ -535,13 +556,10 @@ public class EventManager {
             throw new UseCaseLogicException("Parametri non validi: menu e servizio devono esistere.");
         }
 
-        String status = currentEvent.getStatus();
-        if (status == null) {
-            status = "";
-        }
+        EventStatus status = currentEvent.getStatus();
 
         // Pre-condizione: lo stato dell'evento deve essere 'Personale prenotato'
-        if (!status.equals("Personale prenotato")) {
+        if (status != EventStatus.PERSONALE_PRENOTATO) {
             throw new UseCaseLogicException("Impossibile proporre un nuovo menu: lo stato dell'evento non è 'Personale prenotato'.");
         }
 
@@ -549,7 +567,7 @@ public class EventManager {
         System.out.println("SISTEMA - Inviata notifica di proposta di modifica menu allo Chef per il servizio: " + service.getName());
 
         // Post-condizione 2: sovrascrittura dello stato su "Evento in corso"
-        currentEvent.setStatus("Evento in corso");
+        currentEvent.setStatus(EventStatus.IN_CORSO);
 
         // Notifica ai listener l'avvenuta modifica di stato sull'evento
         notifyEventModified(currentEvent);
@@ -576,7 +594,7 @@ public class EventManager {
             String msg = "Cannot assign menu: no event selected";
             throw new UseCaseLogicException(msg);
         }
-        currentEvent.setStatus("evento chiuso");
+        currentEvent.setStatus(EventStatus.CHIUSO);
     }
 
     // Notification methods to avoid code duplication
@@ -667,6 +685,24 @@ public class EventManager {
     private void notifyMenuRemoved(Service service) {
         for (EventReceiver receiver : eventReceivers) {
             receiver.updateMenuRemoved(service);
+        }
+    }
+
+    private void notifyPersonalePrenotato(Service s, User p) {
+        for (EventReceiver receiver : eventReceivers) {
+            receiver.updatePersonalePrenotato(s, p);
+        }
+    }
+
+    private void notifyCuocoAssegnato(Service s, User c) {
+        for (EventReceiver receiver : eventReceivers) {
+            receiver.updateCuocoAssegnato(s, c);
+        }
+    }
+
+    private void notifyRuoloAssegnato(Service s, User p, String ruolo) {
+        for (EventReceiver receiver : eventReceivers) {
+            receiver.updateRuoloAssegnato(s, p, ruolo);
         }
     }
 }

@@ -19,7 +19,7 @@ public class FineConditions {
     }
 
     public boolean checkParticipantsVariation(int participantsVariation) {
-        return participantsVariation < maxDeltaParticipants;
+        return participantsVariation > maxDeltaParticipants;
     }
 
     public boolean checkDaysNotice(Date eventDate) {

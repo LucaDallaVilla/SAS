@@ -1,6 +1,7 @@
 package catering.businesslogic.event;
 
 import catering.businesslogic.menu.Menu;
+import catering.businesslogic.user.User;
 
 /**
  * Interface for receiving event-related notifications.
@@ -23,4 +24,10 @@ public interface EventReceiver {
     void updateMenuAssigned(Service service, Menu menu);
 
     void updateMenuRemoved(Service service);
+
+    void updatePersonalePrenotato(Service s, User p);
+
+    void updateCuocoAssegnato(Service s, User c);
+
+    void updateRuoloAssegnato(Service s, User p, String ruolo);
 }

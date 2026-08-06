@@ -4,6 +4,7 @@ import catering.businesslogic.event.EventSheet;
 import catering.businesslogic.event.EventReceiver;
 import catering.businesslogic.event.Service;
 import catering.businesslogic.menu.Menu;
+import catering.businesslogic.user.User;
 
 /**
  * Persistence class for Event operations.
@@ -49,5 +50,20 @@ public class EventPersistence implements EventReceiver {
     @Override
     public void updateMenuRemoved(Service service) {
         service.removeMenuFromService();
+    }
+
+    @Override
+    public void updatePersonalePrenotato(Service s, User p) {
+        // Implementation for staff booking persistence
+    }
+
+    @Override
+    public void updateCuocoAssegnato(Service s, User c) {
+        // Implementation for cook assignment persistence
+    }
+
+    @Override
+    public void updateRuoloAssegnato(Service s, User p, String ruolo) {
+        // Implementation for role assignment persistence
     }
 }

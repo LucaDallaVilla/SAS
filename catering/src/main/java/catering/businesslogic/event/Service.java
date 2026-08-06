@@ -32,6 +32,7 @@ public class Service {
 
     public Service() {
         this.staffList = new ArrayList<>();
+        setStatus("active");
     }
 
     public Service(String name) {
@@ -40,6 +41,7 @@ public class Service {
     }
 
     public Service(ServiceData data) {
+        this();
         this.type = data.type();
         this.date = data.date();
         this.timeStart = data.timeStart();
